@@ -7,13 +7,13 @@ import Parse from "parse";
 import Components from "./Components/Components";
 
 const Env = {
-  APPLICATION_ID: "",
-  JAVASCRIPT_KEY: "",
+  APPLICATION_ID: "ysAuCSKWYWxVfhPPKgDbkgJy0aA2A5OYjeYv67MU",
+  JAVASCRIPT_KEY: "BP7kRKTm116TbuHNACX8dH8zI62kJxfFmj5PcsW8",
   SERVER_URL: "https://parseapi.back4app.com",
 };
 
-// Parse.initialize(Env.APPLICATION_ID, Env.JAVASCRIPT_KEY);
-// Parse.serverURL(Env.SERVER_URL);
+Parse.initialize(Env.APPLICATION_ID, Env.JAVASCRIPT_KEY);
+Parse.serverURL(Env.SERVER_URL);
 
 function App() {
   return <Components />;

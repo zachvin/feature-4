@@ -1,10 +1,27 @@
-export default function Identifier() {
+import React, { useEffect, useState } from "react";
+import { getPlantById, getAllPlants } from "../Services/plants";
+
+// Stateful parent
+const Identifier = () => {
+  const [plants, setPlants] = useState([]);
+
+  // Fetch all plant data from DB on page load
+  useEffect(() => {
+    getAllPlants().then((plants) => {
+      console.log(plants);
+      setPlants(plants);
+    });
+  }, []);
+
   return (
-    <section>
-      <h1>
-        This is the actual identifier where you can actually identify your
-        plants.
-      </h1>
-    </section>
+    <ul>
+      {plants.map((plant) => (
+        <div>
+          <li key={plant.id}>{plant.get("name")}</li>{" "}
+        </div>
+      ))}
+    </ul>
   );
-}
+};
+
+export default Identifier();
