@@ -4,15 +4,15 @@ const Nav = () => {
   return (
     <nav>
       <ul>
-        <li>
-          <a href="/">Home</a>
-        </li>
-        <li>
-          <a href="/about">About</a>
-        </li>
-        <li>
-          <a href="/identifier">Identifier</a>
-        </li>
+        <Link to="/">
+          <li>Home</li>
+        </Link>
+        <Link to="/about">
+          <li>About</li>
+        </Link>
+        <Link to="/identifier">
+          <li>Identifier</li>
+        </Link>
       </ul>
     </nav>
   );

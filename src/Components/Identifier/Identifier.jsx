@@ -14,14 +14,18 @@ const Identifier = () => {
   }, []);
 
   return (
-    <ul>
-      {plants.map((plant) => (
-        <div>
-          <li key={plant.id}>{plant.get("name")}</li>{" "}
-        </div>
-      ))}
-    </ul>
+    <section className="identifier">
+      <h1>Identify your plants here with the Plant Identifier!</h1>
+      <div className="plants">
+        {plants.map((plant) => (
+          <div className="plant">
+            <h3>{plant.get("name")}</h3>
+            <h4>{plant.get("scientific")}</h4>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 };
 
-export default Identifier();
+export default Identifier;

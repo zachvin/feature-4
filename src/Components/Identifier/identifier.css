@@ -1,0 +1,18 @@
+.identifier .plant {
+  background-color: black;
+  height: 10rem;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.plants {
+  display: grid;
+  grid-template-rows: repeat(auto-fill, minmax(25rem, 25rem));
+  grid-auto-flow: row;
+}
+
+.plant h4 {
+  font-style: italic;
+}

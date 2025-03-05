@@ -13,7 +13,7 @@ const Env = {
 };
 
 Parse.initialize(Env.APPLICATION_ID, Env.JAVASCRIPT_KEY);
-Parse.serverURL(Env.SERVER_URL);
+Parse.serverURL = Env.SERVER_URL;
 
 function App() {
   return <Components />;
