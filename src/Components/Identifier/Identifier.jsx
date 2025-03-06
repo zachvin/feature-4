@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { getPlantById, getAllPlants } from "../Services/plants";
+import { getFamilyById, getAllFamilies } from "../Services/family";
 
 // Stateful parent
 const Identifier = () => {
   const [plants, setPlants] = useState([]);
+  const [families, setFamilies] = useState([]);
 
-  // Fetch all plant data from DB on page load
+  // Fetch all plant and family data from DB on page load
   useEffect(() => {
     getAllPlants().then((plants) => {
       console.log(plants);
       setPlants(plants);
+    });
+
+    getAllFamilies().then((families) => {
+      console.log(families);
+      setFamilies(families);
     });
   }, []);
 

@@ -9,7 +9,7 @@ export const getFamilyById = (id) => {
   });
 };
 
-// Get all familys regardless of ID
+// Get all families regardless of ID
 export const getAllFamilies = () => {
   const Family = Parse.Object.extend("family");
   const query = new Parse.Query(Family);
