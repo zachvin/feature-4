@@ -1,6 +1,7 @@
 import React from "react";
 
 const IdentifierItem = ({ name, scientific, family }) => {
+  // display plant and family info
   return (
     <div className="plant">
       <h3>{name}</h3>

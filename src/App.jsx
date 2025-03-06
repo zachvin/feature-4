@@ -6,6 +6,7 @@ import "./App.css";
 import Parse from "parse";
 import Components from "./Components/Components";
 
+// Database key information
 const Env = {
   APPLICATION_ID: "ysAuCSKWYWxVfhPPKgDbkgJy0aA2A5OYjeYv67MU",
   JAVASCRIPT_KEY: "BP7kRKTm116TbuHNACX8dH8zI62kJxfFmj5PcsW8",

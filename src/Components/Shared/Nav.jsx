@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 const Nav = () => {
+  // Link instead of <a> doesn't force reload
   return (
     <nav>
       <ul>

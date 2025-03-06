@@ -21,6 +21,7 @@ const Identifier = () => {
     });
   }, []);
 
+  // send plant data and family name to IdentifierItem
   return (
     <section className="identifier">
       <h1>Identify your plants here with the Plant Identifier!</h1>

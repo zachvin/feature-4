@@ -9,6 +9,7 @@ import "./Shared/nav.css";
 import "./Identifier/identifier.css";
 
 export default function Components() {
+  // Everything to be routed must be inside <Router> element
   return (
     <Router>
       <Nav />
