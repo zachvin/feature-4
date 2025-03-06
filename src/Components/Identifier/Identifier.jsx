@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getPlantById, getAllPlants } from "../Services/plants";
+import { getPlantById, getAllPlants } from "../Services/plant";
 import { getFamilyById, getAllFamilies } from "../Services/family";
 import IdentifierItem from "./IdentifierItem";
 
@@ -25,9 +25,17 @@ const Identifier = () => {
     <section className="identifier">
       <h1>Identify your plants here with the Plant Identifier!</h1>
       <div className="plants">
-        {plants.map((plant) => (
-          <IdentifierItem key={plant.id} name={plant.get("name")} scientific={plant.get("scientific")} />
-        ))}
+        {plants.map((plant) => {
+          const family = families.find((f) => f.id === plant.get("family").id);
+          return (
+            <IdentifierItem
+              key={plant.id}
+              name={plant.get("name")}
+              scientific={plant.get("scientific")}
+              family={family ? family.get("name") : "Loading..."}
+            />
+          );
+        })}
       </div>
     </section>
   );
