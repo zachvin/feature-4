@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added protected routes
  
 ### Changed
-
+- Identifier is now a protected route
 
 ### Fixed
 
