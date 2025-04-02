@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added protected routes
  
 ### Changed
-- Identifier is now a protected route
+- Changed identifier to be a protected route
+- Changed auth page to include additional button to home
 
 ### Fixed
 
