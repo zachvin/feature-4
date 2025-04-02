@@ -24,6 +24,11 @@ const AuthModule = () => {
       <Link to="/auth/login">
         <button>Login</button>
       </Link>
+      <br />
+      <br />
+      <Link to="/">
+        <button>Home</button>
+      </Link>
     </div>
   );
 };

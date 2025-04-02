@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import AuthLogout from "../Auth/AuthLogout";
+import { checkUser } from "../Auth/AuthService";
 
 const Nav = () => {
   // Link instead of <a> doesn't force reload
@@ -15,10 +16,13 @@ const Nav = () => {
         <Link to="/identifier">
           <li>Identifier</li>
         </Link>
-        <AuthLogout />
-        <Link to="/auth">
-          <li>Login</li>
-        </Link>
+        {checkUser() ? (
+          <AuthLogout />
+        ) : (
+          <Link to="/auth">
+            <li>Login</li>
+          </Link>
+        )}
       </ul>
     </nav>
   );

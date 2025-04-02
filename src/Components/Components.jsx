@@ -5,7 +5,12 @@ import AuthModule from "./Auth/Auth";
 import AuthRegister from "./Auth/AuthRegister";
 import AuthLogin from "./Auth/AuthLogin";
 
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 
 import "./Shared/nav.css";
@@ -22,6 +27,8 @@ export default function Components() {
         <Route path="/auth/login" element={<AuthLogin />} />
         <Route path="/about" element={<About />} />
         <Route path="*" element={<Navigate to="/auth" replace />} />
+
+        {/* Identifier will eventually be replaced with new page in subsequent features as we transition to final project idea */}
         <Route
           path="/identifier"
           element={<ProtectedRoute element={<Identifier />} />}

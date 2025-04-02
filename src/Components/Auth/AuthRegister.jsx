@@ -10,7 +10,7 @@ const AuthRegister = () => {
     firstName: "",
     lastName: "",
     email: "",
-    password: ""
+    password: "",
   });
 
   // flags in the state to watch for add/remove updates
@@ -33,7 +33,7 @@ const AuthRegister = () => {
           alert(
             `${userCreated.get("firstName")}, you successfully registered!`
           );
-          navigate("/");
+          navigate("/identifier");
         }
         // TODO: redirect user to main app
         setAdd(false);
@@ -49,7 +49,7 @@ const AuthRegister = () => {
 
     setNewUser({
       ...newUser,
-      [name]: newValue
+      [name]: newValue,
     });
   };
 

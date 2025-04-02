@@ -9,7 +9,7 @@ const AuthLogin = () => {
   // redirect already authenticated users back to home
   const [currentUser, setCurrentUser] = useState({
     email: "",
-    password: ""
+    password: "",
   });
 
   // flags in the state to watch for add/remove updates
@@ -30,7 +30,7 @@ const AuthLogin = () => {
           alert(
             `${userLoggedIn.get("firstName")}, you successfully logged in!`
           );
-          navigate("/");
+          navigate("/identifier");
         }
         // TODO: redirect user to main app
         setAdd(false);
@@ -46,7 +46,7 @@ const AuthLogin = () => {
 
     setCurrentUser({
       ...currentUser,
-      [name]: newValue
+      [name]: newValue,
     });
   };
 
