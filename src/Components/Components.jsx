@@ -6,6 +6,7 @@ import AuthRegister from "./Auth/AuthRegister";
 import AuthLogin from "./Auth/AuthLogin";
 
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 
 import "./Shared/nav.css";
 import "./Identifier/identifier.css";
@@ -20,8 +21,11 @@ export default function Components() {
         <Route path="/auth/register" element={<AuthRegister />} />
         <Route path="/auth/login" element={<AuthLogin />} />
         <Route path="/about" element={<About />} />
-        <Route path="/identifier" element={<Identifier />} />
         <Route path="*" element={<Navigate to="/auth" replace />} />
+        <Route
+          path="/identifier"
+          element={<ProtectedRoute element={<Identifier />} />}
+        />
       </Routes>
     </Router>
   );
