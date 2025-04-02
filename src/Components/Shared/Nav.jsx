@@ -14,6 +14,9 @@ const Nav = () => {
         <Link to="/identifier">
           <li>Identifier</li>
         </Link>
+        <Link to="/auth">
+          <li>Login</li>
+        </Link>
       </ul>
     </nav>
   );
