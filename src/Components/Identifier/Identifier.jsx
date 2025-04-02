@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getPlantById, getAllPlants } from "../Services/plant";
 import { getFamilyById, getAllFamilies } from "../Services/family";
 import IdentifierItem from "./IdentifierItem";
+import Nav from "../Shared/Nav";
 
 // Stateful parent
 const Identifier = () => {
@@ -24,6 +25,7 @@ const Identifier = () => {
   // send plant data and family name to IdentifierItem
   return (
     <section className="identifier">
+      <Nav />
       <h1>Identify your plants here with the Plant Identifier!</h1>
       <div className="plants">
         {plants.map((plant) => {
