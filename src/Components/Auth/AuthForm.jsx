@@ -84,11 +84,19 @@ const AuthForm = ({ user, isLogin, onChange, onSubmit }) => {
           </div>
           {!isLogin ? (
             <h3 className="text-gray-700">
-              Already have an account? <Link to="/auth/login">Log in</Link>.
+              Already have an account?{" "}
+              <Link to="/auth/login" className="font-bold text-indigo-600">
+                Log in
+              </Link>
+              .
             </h3>
           ) : (
             <h3 className="text-gray-700">
-              Don't have an account? <Link to="/auth/register">Register</Link>.
+              Don't have an account?{" "}
+              <Link to="/auth/register" className="font-bold text-indigo-600">
+                Register
+              </Link>
+              .
             </h3>
           )}
         </form>

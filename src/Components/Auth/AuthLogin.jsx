@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { checkUser, loginUser } from "./AuthService";
 import AuthForm from "./AuthForm";
 import { useNavigate } from "react-router-dom";
+import Nav from "../Shared/Nav";
 
 const AuthLogin = () => {
   const navigate = useNavigate();
@@ -57,14 +58,17 @@ const AuthLogin = () => {
   };
 
   return (
-    <div>
-      <AuthForm
-        user={currentUser}
-        isLogin={true}
-        onChange={onChangeHandler}
-        onSubmit={onSubmitHandler}
-      />
-    </div>
+    <>
+      <Nav />
+      <div>
+        <AuthForm
+          user={currentUser}
+          isLogin={true}
+          onChange={onChangeHandler}
+          onSubmit={onSubmitHandler}
+        />
+      </div>
+    </>
   );
 };
 

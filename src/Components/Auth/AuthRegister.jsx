@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { checkUser, createUser } from "./AuthService";
 import AuthForm from "./AuthForm";
 import { useNavigate } from "react-router-dom";
+import Nav from "../Shared/Nav";
 
 const AuthRegister = () => {
   const navigate = useNavigate();
@@ -60,13 +61,16 @@ const AuthRegister = () => {
   };
 
   return (
-    <div>
-      <AuthForm
-        user={newUser}
-        onChange={onChangeHandler}
-        onSubmit={onSubmitHandler}
-      />
-    </div>
+    <>
+      <Nav />
+      <div>
+        <AuthForm
+          user={newUser}
+          onChange={onChangeHandler}
+          onSubmit={onSubmitHandler}
+        />
+      </div>
+    </>
   );
 };
 
