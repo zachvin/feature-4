@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import AuthLogout from "../Auth/AuthLogout";
-import { checkUser } from "../Auth/AuthService";
+import { checkUser, logoutUser } from "../Auth/AuthService";
 
 const Nav = () => {
   // Link instead of <a> doesn't force reload
@@ -37,11 +37,27 @@ const Nav = () => {
                 Models
               </Link>
             </li>
+            <li>
+              <Link
+                to="/dashboard"
+                className="block p-2 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              >
+                Dashboard
+              </Link>
+            </li>
           </ul>
         </div>
         <ul className="flex justify-end align-middle gap-12 w-xs">
           {checkUser() ? (
             <>
+              <li>
+                <button
+                  className="block p-2 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700 cursor-pointer"
+                  onClick={logoutUser}
+                >
+                  Log out
+                </button>
+              </li>
               <li>
                 <Link
                   to="/profile"

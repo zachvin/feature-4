@@ -11,7 +11,7 @@ export default function Home() {
             Instantly.
           </span>
         </h1>
-        <h2 className="font-medium text-md p-4">
+        <h2 className="font-medium text-md p-4 text-gray-900">
           Automatically get your neural network connected to thousands of
           testers.
         </h2>

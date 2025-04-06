@@ -4,6 +4,7 @@ import Identifier from "./Identifier/Identifier";
 import AuthModule from "./Auth/Auth";
 import AuthRegister from "./Auth/AuthRegister";
 import AuthLogin from "./Auth/AuthLogin";
+import Dash from "./Dashboard/Dash";
 
 import {
   BrowserRouter as Router,
@@ -25,8 +26,8 @@ export default function Components() {
         <Route path="/auth/register" element={<AuthRegister />} />
         <Route path="/auth/login" element={<AuthLogin />} />
         <Route path="/about" element={<About />} />
+        <Route path="/dashboard" element={<Dash />} />
         <Route path="*" element={<Navigate to="/auth" replace />} />
-
         {/* Identifier will eventually be replaced with new page in subsequent features as we transition to final project idea */}
         <Route
           path="/identifier"
