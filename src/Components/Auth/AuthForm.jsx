@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const AuthForm = ({ user, isLogin, onChange, onSubmit }) => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
+      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-gray-900">
         <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
           {!isLogin ? "Sign up" : "Log in"}
         </h2>
@@ -54,7 +54,7 @@ const AuthForm = ({ user, isLogin, onChange, onSubmit }) => {
               id="email-input"
               value={user.email}
               onChange={onChange}
-              name="Email"
+              name="email"
               required
             />
           </div>{" "}
@@ -68,7 +68,7 @@ const AuthForm = ({ user, isLogin, onChange, onSubmit }) => {
               id="password-input"
               value={user.password}
               onChange={onChange}
-              name="Password"
+              name="password"
               min="0"
               required
             />

@@ -13,7 +13,6 @@ import {
 } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 
-import "./Shared/nav.css";
 import "./Identifier/identifier.css";
 
 export default function Components() {
