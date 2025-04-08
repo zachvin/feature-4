@@ -6,7 +6,7 @@ import DashForm from "./DashForm";
 const Dash = () => {
   // dictionary structure in case other datatypes are supported later
   const [input, setInput] = useState({
-    text: "",
+    input: "",
   });
 
   // flags in the state to watch for add/remove updates
@@ -34,13 +34,14 @@ const Dash = () => {
     setIsLoading(true);
 
     try {
-      const url = "https://example.com/api/data";
+      const url = "http://34.70.192.108:80/predict";
+      // const url = "http://127.0.0.1:8000/predict";
       const message = {
         input: input,
-        timestamp: Date.now(),
+        // timestamp: Date.now(),
       };
 
-      const response = await sendInput(url, message);
+      const response = await sendInput(url, input);
       setApiData(response);
     } catch (err) {
       console.error("API Error in component:", err);
@@ -62,7 +63,7 @@ const Dash = () => {
 
           {error && <p style={{ color: "red" }}>Error: {error.message}</p>}
 
-          {apiData && <p>{JSON.stringify(apiData, null, 2)}</p>}
+          {apiData && !isLoading && <p>{apiData}</p>}
         </div>
       </section>
     </>

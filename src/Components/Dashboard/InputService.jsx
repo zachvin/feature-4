@@ -1,5 +1,6 @@
 export async function sendInput(url, data, method = "POST", headers = {}) {
   try {
+    console.log(data);
     const response = await fetch(url, {
       method: method,
       headers: {
@@ -17,7 +18,7 @@ export async function sendInput(url, data, method = "POST", headers = {}) {
     // Attempt to parse the response as JSON. If it's not JSON, it will throw an error,
     // which is caught in the outer try-catch.
     const responseData = await response.json();
-    return responseData; // Return the parsed JSON data
+    return responseData.prediction; // Return the parsed JSON data
   } catch (error) {
     console.error("Error sending data to API:", error);
     // You might want to re-throw the error, or return a specific error object,
