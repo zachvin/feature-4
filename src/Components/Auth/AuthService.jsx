@@ -49,8 +49,13 @@ export const logoutUser = () => {
   return Parse.User.logOut()
     .then(() => {
       console.log("Logged out successfully.");
+      window.location.reload();
     })
     .catch((error) => {
       alert(`Error: ${error.message}`);
     });
+};
+
+export const readUser = () => {
+  return Parse.User.current();
 };

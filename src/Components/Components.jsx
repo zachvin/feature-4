@@ -26,7 +26,10 @@ export default function Components() {
         <Route path="/auth/register" element={<AuthRegister />} />
         <Route path="/auth/login" element={<AuthLogin />} />
         <Route path="/about" element={<About />} />
-        <Route path="/dashboard" element={<Dash />} />
+        <Route
+          path="/dashboard"
+          element={<ProtectedRoute element={<Dash />} />}
+        />
         <Route path="*" element={<Navigate to="/auth" replace />} />
         {/* Identifier will eventually be replaced with new page in subsequent features as we transition to final project idea */}
         <Route
