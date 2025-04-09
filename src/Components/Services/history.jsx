@@ -35,3 +35,17 @@ export async function appendUserHistory(model_id, time, input, output) {
   await historyUpdate.save();
   return;
 }
+
+export async function deleteUserHistory(id, history, setHistory) {
+  setHistory(history.filter((item) => item.id !== id)); // Remove the deleted history from local storage
+
+  try {
+    // Remove deleted history from database
+    const HistoryToDelete = Parse.Object.extend("history");
+    const item = new HistoryToDelete();
+    item.id = id;
+    await item.destroy();
+  } catch (err) {
+    console.error("Bad delete in component:", err);
+  }
+}

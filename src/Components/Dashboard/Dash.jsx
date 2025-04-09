@@ -3,7 +3,12 @@ import Nav from "../Shared/Nav";
 import { sendInput } from "./InputService";
 import DashForm from "./DashForm";
 import { readUser } from "../Auth/AuthService";
-import { getUserHistory, appendUserHistory } from "../Services/history";
+import {
+  getUserHistory,
+  appendUserHistory,
+  deleteUserHistory,
+} from "../Services/history";
+import HistoryItem from "./HistoryItem";
 
 const Dash = () => {
   // dictionary structure in case other datatypes are supported later
@@ -22,6 +27,9 @@ const Dash = () => {
 
   useEffect(() => {
     getUserHistory().then((loadedHistory) => {
+      // reset history to being empty on page load because strict mode makes this
+      // run twice which doubles the history array I guess that's considered helpful
+      setHistory([]);
       loadedHistory.forEach((element) => {
         const next = {
           model_id: element.get("model_id"),
@@ -33,6 +41,7 @@ const Dash = () => {
             minute: "2-digit",
             second: "2-digit",
           }),
+          id: element.id,
         };
         setHistory((prev) => [next, ...prev]);
       });
@@ -86,10 +95,6 @@ const Dash = () => {
     }
   };
 
-  // user block
-  // submission block
-  // history block?
-
   return (
     <>
       <Nav />
@@ -136,19 +141,13 @@ const Dash = () => {
               <p className="mt-4">Loading history...</p>
             ) : (
               history.map((item, index) => (
-                <div
+                <HistoryItem
+                  item={item}
                   key={index}
-                  className="flex border-y-1 justify-between gap-4 border-gray-300 py-2 -mt-[1px]"
-                >
-                  <p className="text-md w-1/4 flex">
-                    {item.model_id}
-                    <span className="text-sm self-center ml-2">
-                      {item.time}
-                    </span>
-                  </p>
-                  <p className="block w-1/2">{item.input}</p>
-                  <p className="block w-1/4">{item.response}</p>
-                </div>
+                  deleteUserHistory={deleteUserHistory}
+                  history={history}
+                  setHistory={setHistory}
+                />
               ))
             )}
           </div>
