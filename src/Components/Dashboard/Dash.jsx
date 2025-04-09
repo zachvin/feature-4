@@ -3,6 +3,7 @@ import Nav from "../Shared/Nav";
 import { sendInput } from "./InputService";
 import DashForm from "./DashForm";
 import { readUser } from "../Auth/AuthService";
+import { getUserHistory, appendUserHistory } from "../Services/history";
 
 const Dash = () => {
   // dictionary structure in case other datatypes are supported later
@@ -17,12 +18,31 @@ const Dash = () => {
 
   // array for storing history
   const [history, setHistory] = useState([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+
+  useEffect(() => {
+    getUserHistory().then((loadedHistory) => {
+      loadedHistory.forEach((element) => {
+        const next = {
+          model_id: element.get("model_id"),
+          input: element.get("input"),
+          response: element.get("output"),
+          time: new Date(element.get("time")).toLocaleTimeString("en-US", {
+            hour12: false,
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          }),
+        };
+        setHistory((prev) => [next, ...prev]);
+      });
+      setIsLoadingHistory(false);
+    });
+  }, []);
 
   const onChangeHandler = (e) => {
     e.preventDefault();
-    console.log(e.target);
     const { name, value } = e.target;
-    console.log(value);
 
     setInput({
       ...input,
@@ -33,20 +53,17 @@ const Dash = () => {
   // do API message here
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    console.log("submitted: ", e.target);
 
     setIsLoading(true);
 
     try {
       const url = "http://34.70.192.108:80/predict";
-      // const message = {
-      //   input: input,
-      // };
 
       const response = await sendInput(url, input);
 
       setHistory([
         {
+          model_id: "sentiment-analysis",
           input: input.text,
           response: response,
           time: new Date(Date.now()).toLocaleTimeString("en-US", {
@@ -58,8 +75,9 @@ const Dash = () => {
         },
         ...history,
       ]);
-      console.log(history);
       setApiData(response);
+
+      appendUserHistory("sentiment-analysis", Date.now(), input.text, response);
     } catch (err) {
       console.error("API Error in component:", err);
       setError(err);
@@ -114,19 +132,25 @@ const Dash = () => {
               <p className="block w-1/2">Input</p>
               <p className="block w-1/4">Output</p>
             </div>
-            {history.map((item, index) => (
-              <div
-                key={index}
-                className="flex border-y-1 justify-between gap-4 border-gray-300 py-2 -mt-[1px]"
-              >
-                <p className="text-md w-1/4 flex">
-                  sentiment-deployment{" "}
-                  <span className="text-sm self-center ml-2">{item.time}</span>
-                </p>
-                <p className="block w-1/2">{item.input}</p>
-                <p className="block w-1/4">{item.response}</p>
-              </div>
-            ))}
+            {isLoadingHistory ? (
+              <p className="mt-4">Loading history...</p>
+            ) : (
+              history.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex border-y-1 justify-between gap-4 border-gray-300 py-2 -mt-[1px]"
+                >
+                  <p className="text-md w-1/4 flex">
+                    {item.model_id}
+                    <span className="text-sm self-center ml-2">
+                      {item.time}
+                    </span>
+                  </p>
+                  <p className="block w-1/2">{item.input}</p>
+                  <p className="block w-1/4">{item.response}</p>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
