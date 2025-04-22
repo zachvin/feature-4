@@ -34,7 +34,7 @@ const Nav = () => {
                 to="/identifier"
                 className="block p-2 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >
-                Models
+                Marketplace
               </Link>
             </li>
             <li>
@@ -43,6 +43,14 @@ const Nav = () => {
                 className="block p-2 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >
                 Dashboard
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/models"
+                className="block p-2 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              >
+                Models
               </Link>
             </li>
           </ul>

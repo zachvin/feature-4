@@ -5,6 +5,7 @@ import AuthModule from "./Auth/Auth";
 import AuthRegister from "./Auth/AuthRegister";
 import AuthLogin from "./Auth/AuthLogin";
 import Dash from "./Dashboard/Dash";
+import Models from "./Models/Models";
 
 import {
   BrowserRouter as Router,
@@ -35,6 +36,10 @@ export default function Components() {
         <Route
           path="/identifier"
           element={<ProtectedRoute element={<Identifier />} />}
+        />
+        <Route
+          path="/models"
+          element={<ProtectedRoute element={<Models />} />}
         />
       </Routes>
     </Router>
