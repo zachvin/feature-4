@@ -1,10 +1,18 @@
+// import { deployApp, pushDockerImageToGCR } from "./services.js";
+
+const services = require("./services.js");
 const express = require("express");
 const multer = require("multer");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
+const util = require("util");
+
+const { exec } = require("child_process");
+const execAsync = util.promisify(exec);
 
 const app = express();
-const port = process.env.PORT || 8000;
+const port = 8000; // || process.env.PORT
 
 // Enable CORS (Cross-Origin Resource Sharing)
 app.use(cors());
@@ -24,39 +32,61 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Define the /predict endpoint, handling file and text data
-app.post("/predict", upload.single("file"), (req, res) => {
-  // Check if a file was uploaded and text was provided
+app.post("/upload", upload.single("file"), async (req, res) => {
+  // check if a file was uploaded and text was provided
   if (!req.file) {
     return res.status(400).json({ error: "Please upload a file." });
   }
-  if (!req.body.text) {
-    return res.status(400).json({ error: "Please provide text input." });
+  if (!req.body.endpoint) {
+    return res.status(400).json({ error: "Please provide an endpoint." });
   }
 
-  // Access the uploaded file and text data
+  // access the uploaded file and text data
   const uploadedFile = req.file;
-  const textInput = req.body.text;
+  const endpoint = req.body.endpoint;
 
-  // Process the file and text data (replace with your actual prediction logic)
-  console.log("Uploaded File:", uploadedFile);
-  console.log("Text Input:", textInput);
+  console.log("Uploaded File:", uploadedFile.filename);
+  console.log(`Image name: ${req.body.imageName}:${req.body.imageTag}`);
+  console.log("Endpoint:", endpoint);
+  console.log("Port:", req.body.port);
 
-  // Simulate a prediction result
-  const predictionResult = {
-    result: `Prediction: Successfully processed file ${uploadedFile.originalname} and text: ${textInput}`,
-    fileName: uploadedFile.filename,
-    fileSize: uploadedFile.size,
-    textLength: textInput.length,
-    // Add more result data as needed
-  };
+  // save file to local storage
+  //   const destinationPath = `uploads/${uploadedFile.originalname}`;
+  //   await fs.rename(uploadedFile.path, destinationPath);
 
-  // Send the prediction result as JSON
-  res.status(200).json(predictionResult);
+  // load docker image from tar
+  // docker load --input fedora.tar
+  const loadCommand = `docker load --input ${uploadedFile.path}`;
+  var { stdout, stderr } = await execAsync(loadCommand);
+
+  console.log(stdout);
+  console.log(stderr);
+
+  // send file to GCR
+  const pushResult = await services.pushDockerImageToGCR(
+    req.body.imageName,
+    "latest"
+    // req.body.imageTag
+  );
+  console.log(pushResult);
+
+  // deploy to cluster
+  const deployResult = await services.deployApp(
+    req.body.imageName,
+    req.body.port
+  );
+  console.log(deployResult);
+
+  res.status(200).json({
+    message: "File uploaded, pushed, and deployed successfully!",
+    pushResult,
+    deployResult,
+    // savedFilePath: destinationPath,
+  });
 });
 
 // Serve static files from the 'uploads' directory (optional, for accessing uploaded files)
-app.use("/uploads", express.static("uploads"));
+// app.use("/uploads", express.static("uploads"));
 
 // Start the server
 app.listen(port, () => {

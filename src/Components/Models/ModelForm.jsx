@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 import Parse from "parse";
+import { uploadModel } from "./ModelService";
 
 const ModelForm = ({ onSubmit }) => {
   const [file, setFile] = useState(null);
@@ -29,7 +30,10 @@ const ModelForm = ({ onSubmit }) => {
     setDragActive(false);
 
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile && (droppedFile.name.endsWith(".zip") || droppedFile.name.endsWith(".tar"))) {
+    if (
+      droppedFile &&
+      (droppedFile.name.endsWith(".zip") || droppedFile.name.endsWith(".tar"))
+    ) {
       setFile(droppedFile);
     } else {
       alert("Please upload a .zip or .tar file.");
@@ -52,25 +56,43 @@ const ModelForm = ({ onSubmit }) => {
     if (!file || !user) return alert("Login and select a file first.");
 
     try {
-      const parseFile = new Parse.File(file.name, file);
-      await parseFile.save();
+      // const parseFile = new Parse.File(file.name, file);
+      // await parseFile.save();
 
-      const DockerModel = Parse.Object.extend("DockerModel");
-      const model = new DockerModel();
-      const imageName = `model-${user.id}-${Date.now()}`;
+      // const DockerModel = Parse.Object.extend("DockerModel");
+      // const model = new DockerModel();
+      // const imageName = `model-${user.id}-${Date.now()}`;
 
-      model.set("file", parseFile);
-      model.set("userID", Parse.User.current());
-      model.set("status", "pending");
-      model.set("imageName", imageName);
-      model.set("endpoint", (endpoint || "").trim());
-      model.set("inputs", inputs.map(i => ({
-        name: (i.name || "").trim(),
-        example: (i.example || "").trim()
-      })));
-      model.set("contentType", "application/json");
+      // model.set("file", parseFile);
+      // model.set("userID", Parse.User.current());
+      // model.set("status", "pending");
+      // model.set("imageName", imageName);
+      // model.set("endpoint", (endpoint || "").trim());
+      // model.set(
+      //   "inputs",
+      //   inputs.map((i) => ({
+      //     name: (i.name || "").trim(),
+      //     example: (i.example || "").trim(),
+      //   }))
+      // );
+      // model.set("contentType", "application/json");
 
-      await model.save();
+      // console.log("Saving model...");
+
+      // await model.save();
+
+      console.log("Sending to backend...");
+
+      // send file to backend here
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("imageName", "docker-dummy");
+      formData.append("imageTag", "v1.0"); // TODO get input for image tag
+      formData.append("endpoint", (endpoint || "").trim());
+      formData.append("port", 8123); // TODO standardize port naming convention
+      formData.append("contentType", "application/json");
+
+      await uploadModel(formData); // Pass the FormData object
 
       setFile(null);
       setInputs([{ name: "", example: "" }]);
