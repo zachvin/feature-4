@@ -9,6 +9,8 @@ import {
   deleteUserHistory,
 } from "../Services/history";
 import HistoryItem from "./HistoryItem";
+import ModelDropdown from "./ModelDropdown";
+import Parse from "parse";
 
 const Dash = () => {
   // dictionary structure in case other datatypes are supported later
@@ -24,6 +26,27 @@ const Dash = () => {
   // array for storing history
   const [history, setHistory] = useState([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+
+  const [models, setModels] = useState([]);
+  const [loadingModels, setLoadingModels] = useState(true);
+
+  const fetchModels = async () => {
+    setLoadingModels(true);
+    try {
+      const DockerModel = Parse.Object.extend("DockerModel");
+      const query = new Parse.Query(DockerModel);
+      query.descending("createdAt");
+      const results = await query.find();
+      setModels(results);
+    } catch (err) {
+      console.error("Error fetching marketplace models:", err.message);
+    }
+    setLoadingModels(false);
+  };
+
+  useEffect(() => {
+    fetchModels();
+  }, []);
 
   useEffect(() => {
     getUserHistory().then((loadedHistory) => {
@@ -49,6 +72,17 @@ const Dash = () => {
     });
   }, []);
 
+  const [currentPort, setCurrentPort] = useState(0);
+  const [currentEndpoint, setCurrentEndpoint] = useState("/predict");
+
+  const onSelect = (modelName) => {
+    // get model
+    console.log(modelName);
+    const currentModel = models.find((model) => model.get("name") == modelName);
+    setCurrentPort(currentModel.get("port"));
+    setCurrentEndpoint(currentModel.get("endpoint"));
+  };
+
   const onChangeHandler = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
@@ -66,7 +100,7 @@ const Dash = () => {
     setIsLoading(true);
 
     try {
-      const url = "http://34.70.192.108:80/predict";
+      const url = `http://34.70.192.108:${currentPort}${currentEndpoint}`;
 
       const response = await sendInput(url, input);
 
@@ -111,6 +145,12 @@ const Dash = () => {
           <div className="w-2/3"></div>
         </div>
         <div className="flex justify-around items-start border border-gray-300 bg-white rounded-xl shadow-lg p-16">
+          {/* SELECT NETWORK TO USE */}
+          <ModelDropdown
+            models={models}
+            loading={loadingModels}
+            onSelect={onSelect}
+          />
           <DashForm onSubmit={onSubmitHandler} onChange={onChangeHandler} />
           <div>
             <h2 className="text-2xl font-medium">Network output:</h2>
