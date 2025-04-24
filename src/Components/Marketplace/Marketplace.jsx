@@ -1,30 +1,22 @@
 import React, { useEffect, useState } from "react";
 import Parse from "parse";
 import Nav from "../Shared/Nav";
-import ModelForm from "./ModelForm";
-import ModelList from "./ModelList";
+import MarketplaceCard from "./MarketplaceCard";
 
-const Models = () => {
+const Marketplace = () => {
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchModels = async () => {
-    const user = Parse.User.current();
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-
     setLoading(true);
     try {
       const DockerModel = Parse.Object.extend("DockerModel");
       const query = new Parse.Query(DockerModel);
-      query.equalTo("userID", user);
       query.descending("createdAt");
       const results = await query.find();
       setModels(results);
     } catch (err) {
-      console.error("Error fetching models:", err.message);
+      console.error("Error fetching marketplace models:", err.message);
     }
     setLoading(false);
   };
@@ -36,12 +28,19 @@ const Models = () => {
   return (
     <>
       <Nav />
-      <section className="grid grid-cols-1 gap-2 w-3/4 h-3/4 mx-auto mt-32 text-gray-900">
-        <ModelForm onSubmit={fetchModels} />
-        <ModelList models={models} loading={loading} />
+      <section className="w-11/12 mx-auto mt-36 text-gray-900">
+        {loading ? (
+          <p className="text-center">Loading models...</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {models.map((model) => (
+              <MarketplaceCard key={model.id} model={model} />
+            ))}
+          </div>
+        )}
       </section>
     </>
   );
 };
 
-export default Models;
+export default Marketplace;

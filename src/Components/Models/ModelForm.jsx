@@ -3,24 +3,26 @@ import Parse from "parse";
 
 const ModelForm = ({ onSubmit }) => {
   const [file, setFile] = useState(null);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [endpoint, setEndpoint] = useState("");
-  const [inputs, setInputs] = useState([{ name: "", example: "" }]);
+  const [fields, setFields] = useState([{ name: "", type: "string" }]);
   const [dragActive, setDragActive] = useState(false);
 
-  const addInputField = () => {
-    setInputs([...inputs, { name: "", example: "" }]);
+  const addField = () => {
+    setFields([...fields, { name: "", type: "string" }]);
   };
 
-  const updateInput = (i, key, val) => {
-    const updated = [...inputs];
+  const updateField = (i, key, val) => {
+    const updated = [...fields];
     updated[i][key] = val;
-    setInputs(updated);
+    setFields(updated);
   };
 
-  const removeInput = (i) => {
-    const updated = [...inputs];
+  const removeField = (i) => {
+    const updated = [...fields];
     updated.splice(i, 1);
-    setInputs(updated);
+    setFields(updated);
   };
 
   const handleDrop = useCallback((e) => {
@@ -29,10 +31,10 @@ const ModelForm = ({ onSubmit }) => {
     setDragActive(false);
 
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile && (droppedFile.name.endsWith(".zip") || droppedFile.name.endsWith(".tar"))) {
+    if (droppedFile && droppedFile.type === "application/tar") {
       setFile(droppedFile);
     } else {
-      alert("Please upload a .zip or .tar file.");
+      alert("Please upload a .tar file.");
     }
   }, []);
 
@@ -57,24 +59,27 @@ const ModelForm = ({ onSubmit }) => {
 
       const DockerModel = Parse.Object.extend("DockerModel");
       const model = new DockerModel();
-      const imageName = `model-${user.id}-${Date.now()}`;
 
       model.set("file", parseFile);
-      model.set("userID", Parse.User.current());
+      model.set("userID", user);
       model.set("status", "pending");
-      model.set("imageName", imageName);
-      model.set("endpoint", (endpoint || "").trim());
-      model.set("inputs", inputs.map(i => ({
-        name: (i.name || "").trim(),
-        example: (i.example || "").trim()
+      model.set("name", name.trim());
+      model.set("description", description.trim());
+      model.set("endpoint", endpoint.trim());
+      model.set("inputs", fields.map(f => ({
+        name: f.name.trim(),
+        type: f.type.trim(),
       })));
       model.set("contentType", "application/json");
 
       await model.save();
 
+      // Reset form
       setFile(null);
-      setInputs([{ name: "", example: "" }]);
+      setName("");
+      setDescription("");
       setEndpoint("");
+      setFields([{ name: "", type: "string" }]);
 
       if (onSubmit) onSubmit();
     } catch (err) {
@@ -89,9 +94,7 @@ const ModelForm = ({ onSubmit }) => {
     >
       <h2 className="text-2xl font-medium">Submit a Model</h2>
 
-      <label className="text-sm font-medium">Upload .tar or .zip:</label>
-
-      {/* Drop zone */}
+      <label className="text-sm font-medium">Upload .tar:</label>
       <div
         onDrop={handleDrop}
         onDragOver={handleDrag}
@@ -105,13 +108,31 @@ const ModelForm = ({ onSubmit }) => {
           Choose File
           <input
             type="file"
-            accept=".tar,.zip"
+            accept=".tar"
             onChange={(e) => setFile(e.target.files[0])}
             className="hidden"
           />
         </label>
         {file && <p className="text-xs mt-2 text-gray-500">{file.name}</p>}
       </div>
+
+      <label className="text-sm font-medium mt-4">Model name:</label>
+      <input
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="My Model"
+        className="p-3 border border-gray-300 rounded-lg text-sm"
+      />
+
+      <label className="text-sm font-medium mt-4">Description:</label>
+      <textarea
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        placeholder="Describe what this model does..."
+        className="p-3 border border-gray-300 rounded-lg text-sm"
+        rows={3}
+      />
 
       <label className="text-sm font-medium mt-4">Model endpoint route:</label>
       <input
@@ -126,23 +147,28 @@ const ModelForm = ({ onSubmit }) => {
 
       <div className="space-y-2 mt-4">
         <h3 className="font-medium text-sm">Input Fields</h3>
-        {inputs.map((inp, i) => (
+        {fields.map((field, i) => (
           <div key={i} className="flex gap-2 items-center relative">
             <input
               className="p-2 border border-gray-300 rounded w-1/2"
-              value={inp.name}
-              onChange={(e) => updateInput(i, "name", e.target.value)}
+              value={field.name}
+              onChange={(e) => updateField(i, "name", e.target.value)}
               placeholder="Field name"
             />
-            <input
+            <select
               className="p-2 border border-gray-300 rounded w-1/2"
-              value={inp.example}
-              onChange={(e) => updateInput(i, "example", e.target.value)}
-              placeholder="Example value"
-            />
-            {inputs.length > 1 && (
+              value={field.type}
+              onChange={(e) => updateField(i, "type", e.target.value)}
+            >
+              <option value="string">string</option>
+              <option value="int">int</option>
+              <option value="float">float</option>
+              <option value="bool">bool</option>
+              <option value="file">file</option>
+            </select>
+            {fields.length > 1 && (
               <svg
-                onClick={() => removeInput(i)}
+                onClick={() => removeField(i)}
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
                 className="stroke-gray-400 fill-gray-300 hover:stroke-red-400 hover:fill-red-300 w-[24px] cursor-pointer"
@@ -157,7 +183,7 @@ const ModelForm = ({ onSubmit }) => {
             )}
           </div>
         ))}
-        <button onClick={addInputField} className="text-blue-600 text-sm mt-1">
+        <button onClick={addField} className="text-blue-600 text-sm mt-1">
           + Add input field
         </button>
       </div>

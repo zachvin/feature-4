@@ -1,6 +1,6 @@
 import Home from "./Home/Home";
 import About from "./About/About";
-import Identifier from "./Identifier/Identifier";
+import Marketplace from "./Marketplace/Marketplace";
 import AuthModule from "./Auth/Auth";
 import AuthRegister from "./Auth/AuthRegister";
 import AuthLogin from "./Auth/AuthLogin";
@@ -35,7 +35,7 @@ export default function Components() {
         {/* Identifier will eventually be replaced with new page in subsequent features as we transition to final project idea */}
         <Route
           path="/identifier"
-          element={<ProtectedRoute element={<Identifier />} />}
+          element={<ProtectedRoute element={<Marketplace />} />}
         />
         <Route
           path="/models"
