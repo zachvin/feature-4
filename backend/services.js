@@ -4,7 +4,6 @@ const execAsync = util.promisify(exec);
 const k8s = require("@kubernetes/client-node");
 
 // pushes Docker image to Google Container Registry
-// reads image from local storage (./uploads/ folder)
 async function pushDockerImageToGCR(imageName, tag) {
   const imageNameWithTag = `us-central1-docker.pkg.dev/sent-deployment/quickstart-docker-repo/${imageName}:v1.0`;
 

@@ -1,11 +1,8 @@
-// import { deployApp, pushDockerImageToGCR } from "./services.js";
-
 const services = require("./services.js");
 const express = require("express");
 const multer = require("multer");
 const cors = require("cors");
 const path = require("path");
-const fs = require("fs");
 const util = require("util");
 
 const { exec } = require("child_process");
@@ -42,51 +39,39 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   }
 
   // access the uploaded file and text data
-  const uploadedFile = req.file;
-  const endpoint = req.body.endpoint;
-
-  console.log("Uploaded File:", uploadedFile.filename);
+  console.log("Uploaded File:", req.file.filename);
   console.log(`Image name: ${req.body.imageName}:${req.body.imageTag}`);
-  console.log("Endpoint:", endpoint);
+  console.log("Endpoint:", req.body.endpoint);
   console.log("Port:", req.body.port);
 
-  // save file to local storage
-  //   const destinationPath = `uploads/${uploadedFile.originalname}`;
-  //   await fs.rename(uploadedFile.path, destinationPath);
-
   // load docker image from tar
-  // docker load --input fedora.tar
-  const loadCommand = `docker load --input ${uploadedFile.path}`;
+  const loadCommand = `docker load --input ${req.file.path}`;
   var { stdout, stderr } = await execAsync(loadCommand);
 
-  console.log(stdout);
-  console.log(stderr);
+  // get image name and tag from docker output
+  const parts = stdout.split(": ");
+  const imageNameWithTag = parts[1];
+  const imageNameParts = imageNameWithTag.split(":");
+
+  const imageName = imageNameParts[0] + Date.now().toString();
+  const imageTag = imageNameParts[1];
+
+  console.log(`Pushing docker image ${imageName}:${imageTag}`);
 
   // send file to GCR
-  const pushResult = await services.pushDockerImageToGCR(
-    req.body.imageName,
-    "latest"
-    // req.body.imageTag
-  );
+  const pushResult = await services.pushDockerImageToGCR(imageName, imageTag);
   console.log(pushResult);
 
   // deploy to cluster
-  const deployResult = await services.deployApp(
-    req.body.imageName,
-    req.body.port
-  );
+  const deployResult = await services.deployApp(imageName, req.body.port);
   console.log(deployResult);
 
   res.status(200).json({
     message: "File uploaded, pushed, and deployed successfully!",
     pushResult,
     deployResult,
-    // savedFilePath: destinationPath,
   });
 });
-
-// Serve static files from the 'uploads' directory (optional, for accessing uploaded files)
-// app.use("/uploads", express.static("uploads"));
 
 // Start the server
 app.listen(port, () => {
