@@ -5,7 +5,8 @@ const k8s = require("@kubernetes/client-node");
 
 // pushes Docker image to Google Container Registry
 async function pushDockerImageToGCR(imageName, tag) {
-  const imageNameWithTag = `us-central1-docker.pkg.dev/sent-deployment/quickstart-docker-repo/${imageName}:v1.0`;
+  const now = Date.now().toString();
+  const imageNameWithTag = `us-central1-docker.pkg.dev/sent-deployment/quickstart-docker-repo/${imageName}${now}:latest`;
 
   try {
     // tag image
@@ -15,10 +16,13 @@ async function pushDockerImageToGCR(imageName, tag) {
 
     var { stdout, stderr } = await execAsync(tagCommand);
 
+    console.log(stdout);
+
     // push image
     console.log(`Attempting to push image: ${imageNameWithTag} to GCR...`);
 
     const pushCommand = `docker push ${imageNameWithTag}`;
+    console.log(pushCommand);
     var { stdout, stderr } = await execAsync(pushCommand);
 
     if (stderr) {
@@ -31,6 +35,7 @@ async function pushDockerImageToGCR(imageName, tag) {
     return {
       success: true,
       message: `Image '${imageNameWithTag}' pushed to GCR.`,
+      time: now,
     };
   } catch (error) {
     console.error("Error executing docker push:", error);
@@ -39,31 +44,31 @@ async function pushDockerImageToGCR(imageName, tag) {
 }
 
 // deploys app to Kubernetes cluster
-async function deployApp(imageName, port) {
+async function deployApp(imageName, port, now) {
   const deploymentManifest = {
     apiVersion: "apps/v1",
     kind: "Deployment",
     metadata: {
-      name: `${imageName}-deployment`,
+      name: `${imageName}${now}-deployment`,
     },
     spec: {
-      replicas: 2,
+      replicas: 1,
       selector: {
         matchLabels: {
-          app: `${imageName}-deployment`,
+          app: `${imageName}${now}-deployment`,
         },
       },
       template: {
         metadata: {
           labels: {
-            app: `${imageName}-deployment`,
+            app: `${imageName}${now}-deployment`,
           },
         },
         spec: {
           containers: [
             {
               name: imageName,
-              image: `us-central1-docker.pkg.dev/sent-deployment/quickstart-docker-repo/${imageName}:v1.0`,
+              image: `us-central1-docker.pkg.dev/sent-deployment/quickstart-docker-repo/${imageName}${now}:latest`,
               ports: [{ containerPort: parseInt(port, 10) }],
             },
           ],
@@ -82,7 +87,7 @@ async function deployApp(imageName, port) {
       namespace: "default",
       body: deploymentManifest,
     });
-    console.log("Deployment created:", response.body);
+    console.log("Deployment created:", response.text);
   } catch (error) {
     if (error.response?.code === 409) {
       console.log("Deployment already exists.");

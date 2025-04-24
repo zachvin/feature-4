@@ -45,25 +45,32 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   console.log("Port:", req.body.port);
 
   // load docker image from tar
+  console.log("Loading docker image...");
   const loadCommand = `docker load --input ${req.file.path}`;
   var { stdout, stderr } = await execAsync(loadCommand);
+
+  console.log(stderr);
 
   // get image name and tag from docker output
   const parts = stdout.split(": ");
   const imageNameWithTag = parts[1];
   const imageNameParts = imageNameWithTag.split(":");
 
-  const imageName = imageNameParts[0] + Date.now().toString();
-  const imageTag = imageNameParts[1];
+  const imageName = imageNameParts[0];
+  const imageTag = imageNameParts[1].trim();
 
-  console.log(`Pushing docker image ${imageName}:${imageTag}`);
+  console.log(`Pushing docker image ${imageName}:${imageTag}...`);
 
   // send file to GCR
   const pushResult = await services.pushDockerImageToGCR(imageName, imageTag);
   console.log(pushResult);
 
   // deploy to cluster
-  const deployResult = await services.deployApp(imageName, req.body.port);
+  const deployResult = await services.deployApp(
+    imageName,
+    req.body.port,
+    pushResult.time
+  );
   console.log(deployResult);
 
   res.status(200).json({
