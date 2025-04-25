@@ -72,14 +72,14 @@ const Dash = () => {
     });
   }, []);
 
-  const [currentPort, setCurrentPort] = useState(0);
+  const [currentIp, setCurrentIp] = useState(0);
   const [currentEndpoint, setCurrentEndpoint] = useState("/predict");
 
   const onSelect = (modelName) => {
     // get model
     console.log(modelName);
     const currentModel = models.find((model) => model.get("name") == modelName);
-    setCurrentPort(currentModel.get("port"));
+    setCurrentIp(currentModel.get("ip"));
     setCurrentEndpoint(currentModel.get("endpoint"));
   };
 
@@ -100,7 +100,8 @@ const Dash = () => {
     setIsLoading(true);
 
     try {
-      const url = `http://34.70.192.108:${currentPort}${currentEndpoint}`;
+      const url = `http://${currentIp}:80${currentEndpoint}`;
+      console.log(url);
 
       const response = await sendInput(url, input);
 
@@ -132,7 +133,7 @@ const Dash = () => {
   return (
     <>
       <Nav />
-      <section className="grid grid-cols-2 gap-2 w-3/4 h-3/4 mx-auto mt-64 text-gray-900">
+      <section className="grid grid-cols-3 gap-2 w-3/4 h-3/4 mx-auto mt-64 text-gray-900">
         <div className="flex justify-around border border-gray-300 bg-white rounded-xl shadow-lg p-16">
           <div className="w-1/3">
             <h3 className="text-xl">Welcome,</h3>
@@ -144,14 +145,17 @@ const Dash = () => {
           </div>
           <div className="w-2/3"></div>
         </div>
-        <div className="flex justify-around items-start border border-gray-300 bg-white rounded-xl shadow-lg p-16">
+        <div className="flex gap-16 items-start border border-gray-300 bg-white rounded-xl shadow-lg p-16 col-span-2">
           {/* SELECT NETWORK TO USE */}
-          <ModelDropdown
-            models={models}
-            loading={loadingModels}
-            onSelect={onSelect}
-          />
-          <DashForm onSubmit={onSubmitHandler} onChange={onChangeHandler} />
+          <div>
+            <h2 className="text-xl font-bold mb-1">1. Select a network</h2>
+            <ModelDropdown
+              models={models}
+              loading={loadingModels}
+              onSelect={onSelect}
+            />
+            <DashForm onSubmit={onSubmitHandler} onChange={onChangeHandler} />
+          </div>
           <div>
             <h2 className="text-2xl font-medium">Network output:</h2>
             {isLoading && <p>Loading...</p>}
@@ -169,7 +173,7 @@ const Dash = () => {
             )}
           </div>
         </div>
-        <div className="border border-gray-300 bg-white rounded-xl shadow-lg p-16 col-span-2">
+        <div className="border border-gray-300 bg-white rounded-xl shadow-lg p-16 col-span-3">
           <h3 className="text-xl mb-4">History</h3>
           <div>
             <div className="flex justify-between font-bold text-gray-500 text-sm gap-4">

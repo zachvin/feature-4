@@ -1,10 +1,12 @@
 export async function sendInput(url, data, method = "POST", headers = {}) {
+  console.log(url);
   try {
     console.log(data);
     const response = await fetch(url, {
       method: method,
       headers: {
         "Content-Type": "application/json", // Default to JSON, can be overridden
+        "Access-Control-Allow-Origin": "*",
         ...headers, // Merge user-provided headers
       },
       body: JSON.stringify(data), // Convert data to JSON string

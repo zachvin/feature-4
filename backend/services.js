@@ -44,7 +44,7 @@ async function pushDockerImageToGCR(imageName, tag) {
 }
 
 // deploys app to Kubernetes cluster
-async function deployApp(imageName, port, now) {
+async function deployApp(imageName, now) {
   const deploymentManifest = {
     apiVersion: "apps/v1",
     kind: "Deployment",
@@ -69,7 +69,7 @@ async function deployApp(imageName, port, now) {
             {
               name: imageName,
               image: `us-central1-docker.pkg.dev/sent-deployment/quickstart-docker-repo/${imageName}${now}:latest`,
-              ports: [{ containerPort: parseInt(port, 10) }],
+              ports: [{ containerPort: 80 }],
             },
           ],
         },
@@ -77,17 +77,40 @@ async function deployApp(imageName, port, now) {
     },
   };
 
+  const serviceManifest = {
+    apiVersion: "v1",
+    kind: "Service",
+    metadata: {
+      name: `${imageName}${now}-service`,
+    },
+    spec: {
+      selector: {
+        app: `${imageName}${now}-deployment`,
+      },
+      ports: [
+        {
+          protocol: "TCP",
+          port: 80, // parseInt(port, 10), // exposed externally
+          targetPort: 80, // containerPort application listens on
+        },
+      ],
+      type: "LoadBalancer",
+      loadBalancerIP: "",
+    },
+  };
+
   const kc = new k8s.KubeConfig();
   kc.loadFromFile("./config");
   const appsV1Api = kc.makeApiClient(k8s.AppsV1Api);
+  const coreV1Api = kc.makeApiClient(k8s.CoreV1Api);
 
+  // creates deployment
   try {
-    // creates deployment
-    const response = await appsV1Api.createNamespacedDeployment({
+    const deploymentResponse = await appsV1Api.createNamespacedDeployment({
       namespace: "default",
       body: deploymentManifest,
     });
-    console.log("Deployment created:", response.text);
+    console.log("Deployment created:", deploymentResponse.metadata);
   } catch (error) {
     if (error.response?.code === 409) {
       console.log("Deployment already exists.");
@@ -96,6 +119,35 @@ async function deployApp(imageName, port, now) {
       throw error;
     }
   }
+
+  // creates service (exposes container to traffic)
+  try {
+    const serviceResponse = await coreV1Api.createNamespacedService({
+      namespace: "default",
+      body: serviceManifest,
+    });
+  } catch (error) {
+    console.log("Error creating service", error);
+    throw error;
+  }
+
+  // waits until IP address is returned
+  let service;
+  while (
+    !service ||
+    !service.status ||
+    !service.status.loadBalancer ||
+    !service.status.loadBalancer.ingress
+  ) {
+    await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds
+    service = await coreV1Api.readNamespacedService({
+      name: `${imageName}${now}-service`,
+      namespace: "default",
+    });
+    console.log(service?.status?.loadBalancer);
+    console.log(service?.status?.loadBalancer?.ingress);
+  }
+  return service.status.loadBalancer.ingress[0].ip;
 }
 
 module.exports = {

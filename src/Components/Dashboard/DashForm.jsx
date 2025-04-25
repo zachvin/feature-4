@@ -8,9 +8,7 @@ const DashForm = ({ onSubmit, onChange }) => {
       className="flex flex-col gap-4"
     >
       <div>
-        <label className="block font-medium text-md text-gray-700 mb-1">
-          Data input
-        </label>
+        <label className="block font-bold text-xl mb-1">2. Data input</label>
         <input
           type="text"
           id="text-input"

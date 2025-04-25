@@ -9,11 +9,11 @@ const ModelDropdown = ({ models, loading, onSelect }) => {
   };
 
   return (
-    <div className="flex flex-col items-start gap-4">
+    <div className="flex flex-col items-start gap-4 mb-4">
       <select
         value={currentModel || ""}
         onChange={handleModelChange}
-        className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-[180px]"
+        className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-xs"
       >
         <option value="" disabled hidden>
           Select a model

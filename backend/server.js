@@ -42,7 +42,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   console.log("Uploaded File:", req.file.filename);
   console.log(`Image name: ${req.body.imageName}:${req.body.imageTag}`);
   console.log("Endpoint:", req.body.endpoint);
-  console.log("Port:", req.body.port);
+  //   console.log("Port:", req.body.port);
 
   // load docker image from tar
   console.log("Loading docker image...");
@@ -66,17 +66,16 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   console.log(pushResult);
 
   // deploy to cluster
-  const deployResult = await services.deployApp(
+  const ip = await services.deployApp(
     imageName,
-    req.body.port,
+    // req.body.port,
     pushResult.time
   );
-  console.log(deployResult);
+  console.log(ip);
 
   res.status(200).json({
     message: "File uploaded, pushed, and deployed successfully!",
-    pushResult,
-    deployResult,
+    ip: ip,
   });
 });
 

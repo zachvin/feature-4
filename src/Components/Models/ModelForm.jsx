@@ -50,29 +50,28 @@ const ModelForm = ({ onSubmit }) => {
     }
   }, []);
 
-  const getUnusedPort = async () => {
-    const DockerModel = Parse.Object.extend("DockerModel");
-    const query = new Parse.Query(DockerModel);
-    query.exists("port");
-    const results = await query.find();
-  
-    const usedPorts = new Set(results.map(r => r.get("port")));
-    let port;
-  
-    do {
-      port = Math.floor(Math.random() * (65535 - 1111)) + 1112;
-    } while (usedPorts.has(port));
-  
-    return port;
-  };
-  
+  // const getUnusedPort = async () => {
+  //   const DockerModel = Parse.Object.extend("DockerModel");
+  //   const query = new Parse.Query(DockerModel);
+  //   query.exists("port");
+  //   const results = await query.find();
+
+  //   const usedPorts = new Set(results.map((r) => r.get("port")));
+  //   let port;
+
+  //   do {
+  //     port = Math.floor(Math.random() * (65535 - 1111)) + 1112;
+  //   } while (usedPorts.has(port));
+
+  //   return port;
+  // };
 
   const submitModel = async () => {
     const user = Parse.User.current();
     if (!file || !user) return alert("Login and select a file first.");
 
     try {
-      const port = await getUnusedPort();
+      // const port = await getUnusedPort();
 
       const DockerModel = Parse.Object.extend("DockerModel");
       const model = new DockerModel();
@@ -82,26 +81,32 @@ const ModelForm = ({ onSubmit }) => {
       model.set("name", name.trim());
       model.set("description", description.trim());
       model.set("endpoint", endpoint.trim());
-      model.set("inputs", fields.map(f => ({
-        name: f.name.trim(),
-        type: f.type.trim(),
-      })));
+      model.set(
+        "inputs",
+        fields.map((f) => ({
+          name: f.name.trim(),
+          type: f.type.trim(),
+        }))
+      );
       model.set("contentType", "application/json");
-      model.set("port", port);
+      // model.set("port", port);
 
-      console.log("Saving model...");
-      await model.save();
-
-      console.log("Sending to backend...");
+      console.log("Deploying and retrieving IP...");
 
       // send file to backend here
       const formData = new FormData();
       formData.append("file", file);
       formData.append("endpoint", (endpoint || "").trim());
-      formData.append("port", port);
+      // formData.append("port", port);
       formData.append("contentType", "application/json");
 
-      await uploadModel(formData); // Pass the FormData object
+      const uploadResponse = await uploadModel(formData);
+
+      model.set("ip", uploadResponse.ip);
+
+      console.log("Saving model to database...");
+      await model.save();
+      console.log("Done.");
 
       // Reset form
       setFile(null);
