@@ -9,6 +9,8 @@ const ModelForm = ({ onSubmit }) => {
   const [endpoint, setEndpoint] = useState("");
   const [fields, setFields] = useState([{ name: "", type: "string" }]);
   const [dragActive, setDragActive] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const addField = () => {
     setFields([...fields, { name: "", type: "string" }]);
@@ -50,26 +52,11 @@ const ModelForm = ({ onSubmit }) => {
     }
   }, []);
 
-  // const getUnusedPort = async () => {
-  //   const DockerModel = Parse.Object.extend("DockerModel");
-  //   const query = new Parse.Query(DockerModel);
-  //   query.exists("port");
-  //   const results = await query.find();
-
-  //   const usedPorts = new Set(results.map((r) => r.get("port")));
-  //   let port;
-
-  //   do {
-  //     port = Math.floor(Math.random() * (65535 - 1111)) + 1112;
-  //   } while (usedPorts.has(port));
-
-  //   return port;
-  // };
-
   const submitModel = async () => {
     const user = Parse.User.current();
     if (!file || !user) return alert("Login and select a file first.");
 
+    setSubmitting(true);
     try {
       // const port = await getUnusedPort();
 
@@ -118,7 +105,13 @@ const ModelForm = ({ onSubmit }) => {
       if (onSubmit) onSubmit();
     } catch (err) {
       console.error("Error submitting model:", err.message);
+    } finally {
+      setSubmitting(false);
     }
+  };
+
+  const removeFile = () => {
+    setFile(null);
   };
 
   return (
@@ -134,20 +127,48 @@ const ModelForm = ({ onSubmit }) => {
         onDragOver={handleDrag}
         onDragLeave={handleDrag}
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors duration-200 ${
-          dragActive ? "border-blue-600 bg-blue-50" : "border-gray-300"
-        }`}
+          dragActive ? "border-indigo-600 bg-indigo-50" : "border-gray-300"
+        }
+        ${file && "border-green-800 bg-green-200"}`}
       >
-        <p className="text-sm text-gray-500 mb-2">Drag & drop your file here</p>
-        <label className="bg-blue-100 border border-blue-300 text-blue-600 px-4 py-2 rounded-lg cursor-pointer w-fit hover:bg-blue-200 inline-block">
-          Choose File
-          <input
-            type="file"
-            accept=".tar"
-            onChange={(e) => setFile(e.target.files[0])}
-            className="hidden"
-          />
-        </label>
-        {file && <p className="text-xs mt-2 text-gray-500">{file.name}</p>}
+        {!file && (
+          <>
+            <p className="text-sm text-gray-500 mb-2">
+              Drag & drop your file here
+            </p>
+            <label className="bg-indigo-100 border border-indigo-300 text-indigo-600 px-4 py-2 rounded-lg cursor-pointer w-fit hover:bg-indigo-200 inline-block">
+              Choose File
+              <input
+                type="file"
+                accept=".tar"
+                onChange={(e) => setFile(e.target.files[0])}
+                className="hidden"
+              />
+            </label>
+          </>
+        )}
+        {file && (
+          <div className="flex flex-col justify-around items-center">
+            <p className="text-md text-gray-700 relative">
+              <svg
+                className="w-12 inline-block"
+                viewBox="-8 0 32 32"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>paper</title>
+                <path d="M13.52 5.72h-7.4c-0.36 0-0.56 0.2-0.6 0.24l-5.28 5.28c-0.040 0.040-0.24 0.24-0.24 0.56v12.2c0 1.24 1 2.24 2.24 2.24h11.24c1.24 0 2.24-1 2.24-2.24v-16.040c0.040-1.24-0.96-2.24-2.2-2.24zM5.28 8.56v1.8c0 0.32-0.24 0.56-0.56 0.56h-1.84l2.4-2.36zM14.080 24.040c0 0.32-0.28 0.56-0.56 0.56h-11.28c-0.32 0-0.56-0.28-0.56-0.56v-11.36h3.040c1.24 0 2.24-1 2.24-2.24v-3.040h6.52c0.32 0 0.56 0.24 0.56 0.56l0.040 16.080z"></path>
+              </svg>
+              {file.name}
+            </p>
+            <button
+              className="bg-none text-sm text-red-400 hover:text-red-500 hover:cursor-pointer"
+              onClick={removeFile}
+            >
+              Remove file
+            </button>
+          </div>
+        )}
       </div>
 
       <label className="text-sm font-medium mt-4">Model name:</label>
@@ -224,10 +245,15 @@ const ModelForm = ({ onSubmit }) => {
 
       <button
         onClick={submitModel}
-        className="mt-6 bg-blue-600 text-white px-4 py-2 rounded-lg w-fit hover:bg-blue-700"
+        className="mt-6 bg-indigo-600 text-white px-4 py-2 rounded-lg w-fit hover:bg-indigo-700 hover:cursor-pointer transition-all"
       >
-        Submit
+        {submitting ? "Submitting..." : "Submit"}
       </button>
+      {submitted && (
+        <h2 className="text-lg font-semibold text-green-600">
+          Deployed successfully!
+        </h2>
+      )}
     </div>
   );
 };

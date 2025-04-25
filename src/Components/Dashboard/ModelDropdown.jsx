@@ -13,7 +13,7 @@ const ModelDropdown = ({ models, loading, onSelect }) => {
       <select
         value={currentModel || ""}
         onChange={handleModelChange}
-        className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-xs"
+        className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-700 w-xs"
       >
         <option value="" disabled hidden>
           Select a model

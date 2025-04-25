@@ -171,6 +171,12 @@ const Dash = () => {
                 {apiData}
               </p>
             )}
+
+            {!apiData && !isLoading && (
+              <p className="text-gray-500 text-md block">
+                Network output will appear here.
+              </p>
+            )}
           </div>
         </div>
         <div className="border border-gray-300 bg-white rounded-xl shadow-lg p-16 col-span-3">

@@ -29,10 +29,11 @@ const Marketplace = () => {
     <>
       <Nav />
       <section className="w-11/12 mx-auto mt-36 text-gray-900">
+        <h1 className="text-6xl">Browse models</h1>
         {loading ? (
-          <p className="text-center">Loading models...</p>
+          <p className="text-center mt-8">Loading models...</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
             {models.map((model) => (
               <MarketplaceCard key={model.id} model={model} />
             ))}
