@@ -1,14 +1,38 @@
-export async function uploadModel(data, method = "POST", headers = {}) {
-  const url = "http://localhost:8000/upload";
+export async function uploadModel(data, method = "POST", endpoint = "upload") {
+  const url = `http://localhost:8000/${endpoint}`;
   try {
-    console.log("Upload info:", data);
+    console.log("Request info:", JSON.stringify(data));
     const response = await fetch(url, {
       method: method,
       body: data,
     });
 
     if (!response.ok) {
-      // handle non-2xx HTTP status codes
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    console.error("Error sending data to API:", error);
+    throw error;
+  }
+}
+
+export async function deleteModel(data, method = "POST", endpoint = "delete") {
+  const url = `http://localhost:8000/${endpoint}`;
+  try {
+    const jsonData = JSON.stringify(data);
+    console.log("Request info:", jsonData);
+    const response = await fetch(url, {
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonData,
+    });
+
+    if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 

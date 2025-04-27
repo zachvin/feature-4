@@ -10,8 +10,10 @@ const HistoryItem = ({ item, deleteUserHistory, history, setHistory }) => {
       className="flex relative border-y-1 justify-between gap-4 border-gray-300 py-2 -mt-[1px]"
     >
       <p className="text-md w-1/4 flex">
-        {item.model_id}
-        <span className="text-sm self-center ml-2">{item.time}</span>
+        {item.model || "No model listed"}
+        <span className="text-sm self-center ml-2 text-gray-600">
+          {item.time}
+        </span>
       </p>
       <p className="block w-1/2">{item.input}</p>
       <p className="block w-1/4">{item.response}</p>

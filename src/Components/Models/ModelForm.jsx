@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import Parse from "parse";
 import { uploadModel } from "./ModelService";
+import { ClipLoader } from "react-spinners";
 
 const ModelForm = ({ onSubmit }) => {
   const [file, setFile] = useState(null);
@@ -56,6 +57,7 @@ const ModelForm = ({ onSubmit }) => {
     const user = Parse.User.current();
     if (!file || !user) return alert("Login and select a file first.");
 
+    setSubmitted(false);
     setSubmitting(true);
     try {
       // const port = await getUnusedPort();
@@ -76,7 +78,6 @@ const ModelForm = ({ onSubmit }) => {
         }))
       );
       model.set("contentType", "application/json");
-      // model.set("port", port);
 
       console.log("Deploying and retrieving IP...");
 
@@ -84,12 +85,12 @@ const ModelForm = ({ onSubmit }) => {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("endpoint", (endpoint || "").trim());
-      // formData.append("port", port);
       formData.append("contentType", "application/json");
 
-      const uploadResponse = await uploadModel(formData);
+      const uploadResponse = await uploadModel(formData); // POST to /upload by default
 
       model.set("ip", uploadResponse.ip);
+      model.set("imageName", `${uploadResponse.imageName}`);
 
       console.log("Saving model to database...");
       await model.save();
@@ -107,6 +108,7 @@ const ModelForm = ({ onSubmit }) => {
       console.error("Error submitting model:", err.message);
     } finally {
       setSubmitting(false);
+      setSubmitted(true);
     }
   };
 
@@ -129,7 +131,7 @@ const ModelForm = ({ onSubmit }) => {
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors duration-200 ${
           dragActive ? "border-indigo-600 bg-indigo-50" : "border-gray-300"
         }
-        ${file && "border-green-800 bg-green-200"}`}
+        ${file && "border-green-500 border-solid bg-green-200"}`}
       >
         {!file && (
           <>
@@ -162,7 +164,7 @@ const ModelForm = ({ onSubmit }) => {
               {file.name}
             </p>
             <button
-              className="bg-none text-sm text-red-400 hover:text-red-500 hover:cursor-pointer"
+              className="bg-none text-sm text-red-400 hover:text-red-500 hover:cursor-pointer hover:underline"
               onClick={removeFile}
             >
               Remove file
@@ -238,17 +240,30 @@ const ModelForm = ({ onSubmit }) => {
             )}
           </div>
         ))}
-        <button onClick={addField} className="text-blue-600 text-sm mt-1">
+        <button
+          onClick={addField}
+          className="text-blue-600 text-sm mt-1 hover:text-blue-800 hover:cursor-pointer hover:underline"
+        >
           + Add input field
         </button>
       </div>
 
-      <button
-        onClick={submitModel}
-        className="mt-6 bg-indigo-600 text-white px-4 py-2 rounded-lg w-fit hover:bg-indigo-700 hover:cursor-pointer transition-all"
-      >
-        {submitting ? "Submitting..." : "Submit"}
-      </button>
+      <div className="flex mt-8 gap-4 items-center">
+        <button
+          onClick={submitModel}
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg w-fit hover:bg-indigo-700 hover:cursor-pointer transition-all"
+        >
+          {submitting ? "Submitting..." : "Submit"}
+        </button>
+        <ClipLoader
+          color={"#4f46e5"}
+          loading={submitting}
+          // cssOverride={override}
+          size={20}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
+      </div>
       {submitted && (
         <h2 className="text-lg font-semibold text-green-600">
           Deployed successfully!

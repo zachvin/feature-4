@@ -112,7 +112,7 @@ async function deployApp(imageName, now) {
     });
     console.log("Deployment created:", deploymentResponse.metadata);
   } catch (error) {
-    if (error.response?.code === 409) {
+    if (error.code === 409) {
       console.log("Deployment already exists.");
     } else {
       console.error("Error creating deployment", error);
@@ -144,13 +144,52 @@ async function deployApp(imageName, now) {
       name: `${imageName}${now}-service`,
       namespace: "default",
     });
-    console.log(service?.status?.loadBalancer);
-    console.log(service?.status?.loadBalancer?.ingress);
   }
   return service.status.loadBalancer.ingress[0].ip;
+}
+
+async function deleteDeployment(imageName) {
+  // delete deployment
+  // GKE limits number of pods, not sure if limited by usage or pod quantity or both
+  const kc = new k8s.KubeConfig();
+  kc.loadFromFile("./config");
+
+  const appsV1Api = kc.makeApiClient(k8s.AppsV1Api);
+  try {
+    console.log(`Deleting deployment ${imageName}-deployment`);
+    const serviceResponse = await appsV1Api.deleteNamespacedDeployment({
+      name: `${imageName}-deployment`,
+      namespace: "default",
+    });
+  } catch (error) {
+    if (error.code == 404) {
+      console.log("Deployment doesn't exist in GKE");
+    } else {
+      console.error("Error deleting deployment", error);
+    }
+  }
+
+  // delete service (services expose endpoint, must be deleted separately)
+  // GKE free tier limits to 8 total services
+  const coreV1Api = kc.makeApiClient(k8s.CoreV1Api);
+  try {
+    console.log(`Deleting service ${imageName}-service`);
+    const serviceResponse = await coreV1Api.deleteNamespacedService({
+      name: `${imageName}-service`,
+      namespace: "default",
+    });
+  } catch (error) {
+    if (error.code === 404) {
+      console.log("Service doesn't exist in GKE");
+      // don't throw error because this doesn't have any impact; there is nothing to delete
+    } else {
+      console.error("Error deleting service", error);
+    }
+  }
 }
 
 module.exports = {
   pushDockerImageToGCR: pushDockerImageToGCR,
   deployApp: deployApp,
+  deleteDeployment: deleteDeployment,
 };

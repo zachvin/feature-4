@@ -1,6 +1,11 @@
 import React from "react";
+import { useEffect } from "react";
 
-const DashForm = ({ onSubmit, onChange }) => {
+const DashForm = ({ onSubmit, onChange, fields }) => {
+  useEffect(() => {
+    console.log(fields);
+  }, []);
+
   return (
     <form
       onSubmit={onSubmit}
@@ -9,14 +14,19 @@ const DashForm = ({ onSubmit, onChange }) => {
     >
       <div>
         <label className="block font-bold text-xl mb-1">2. Data input</label>
-        <input
-          type="text"
-          id="text-input"
-          onChange={onChange}
-          name="text"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
-          required
-        />
+        {fields &&
+          fields.map((field) => (
+            <input
+              type="text"
+              id="text-input"
+              key={field.name}
+              placeholder={field.name}
+              onChange={onChange}
+              name={field.name}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+              required
+            />
+          ))}
       </div>
       <button
         type="submit"

@@ -1,7 +1,5 @@
 export async function sendInput(url, data, method = "POST", headers = {}) {
-  console.log(url);
   try {
-    console.log(data);
     const response = await fetch(url, {
       method: method,
       headers: {

@@ -16,7 +16,7 @@ export const getUserHistory = () => {
 };
 
 // Append history associated with user
-export async function appendUserHistory(model_id, time, input, output) {
+export async function appendUserHistory(model, time, input, output) {
   const History = Parse.Object.extend("history");
 
   const historyUpdate = new History();
@@ -26,7 +26,7 @@ export async function appendUserHistory(model_id, time, input, output) {
 
   historyUpdate.set({
     user: userPointer,
-    model_id: model_id,
+    model: model,
     time: time,
     input: input,
     output: output,

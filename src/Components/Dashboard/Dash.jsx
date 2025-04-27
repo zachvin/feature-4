@@ -55,7 +55,7 @@ const Dash = () => {
       setHistory([]);
       loadedHistory.forEach((element) => {
         const next = {
-          model_id: element.get("model_id"),
+          model: element.get("model"),
           input: element.get("input"),
           response: element.get("output"),
           time: new Date(element.get("time")).toLocaleTimeString("en-US", {
@@ -74,11 +74,13 @@ const Dash = () => {
 
   const [currentIp, setCurrentIp] = useState(0);
   const [currentEndpoint, setCurrentEndpoint] = useState("/predict");
+  const [currentModel, setCurrentModel] = useState(null);
 
   const onSelect = (modelName) => {
     // get model
     console.log(modelName);
     const currentModel = models.find((model) => model.get("name") == modelName);
+    setCurrentModel(currentModel);
     setCurrentIp(currentModel.get("ip"));
     setCurrentEndpoint(currentModel.get("endpoint"));
   };
@@ -104,11 +106,12 @@ const Dash = () => {
       console.log(url);
 
       const response = await sendInput(url, input);
+      const modelName = currentModel.get("name");
 
       setHistory([
         {
-          model_id: "sentiment-analysis",
-          input: input.text,
+          model: modelName,
+          input: JSON.stringify(input),
           response: response,
           time: new Date(Date.now()).toLocaleTimeString("en-US", {
             hour12: false,
@@ -119,9 +122,9 @@ const Dash = () => {
         },
         ...history,
       ]);
-      setApiData(response);
+      setApiData(JSON.stringify(response));
 
-      appendUserHistory("sentiment-analysis", Date.now(), input.text, response);
+      appendUserHistory(modelName, Date.now(), JSON.stringify(input), response);
     } catch (err) {
       console.error("API Error in component:", err);
       setError(err);
@@ -154,7 +157,11 @@ const Dash = () => {
               loading={loadingModels}
               onSelect={onSelect}
             />
-            <DashForm onSubmit={onSubmitHandler} onChange={onChangeHandler} />
+            <DashForm
+              onSubmit={onSubmitHandler}
+              onChange={onChangeHandler}
+              fields={currentModel?.get("inputs")} // TODO this isn't the right variable but has the right idea
+            />
           </div>
           <div>
             <h2 className="text-2xl font-medium">Network output:</h2>
@@ -189,7 +196,7 @@ const Dash = () => {
             </div>
             {isLoadingHistory ? (
               <p className="mt-4">Loading history...</p>
-            ) : (
+            ) : history.length > 0 ? (
               history.map((item, index) => (
                 <HistoryItem
                   item={item}
@@ -199,6 +206,8 @@ const Dash = () => {
                   setHistory={setHistory}
                 />
               ))
+            ) : (
+              <p className="mt-4">No history</p>
             )}
           </div>
         </div>

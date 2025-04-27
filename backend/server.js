@@ -71,11 +71,18 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     // req.body.port,
     pushResult.time
   );
-  console.log(ip);
 
   res.status(200).json({
     message: "File uploaded, pushed, and deployed successfully!",
     ip: ip,
+    imageName: `${imageName}${pushResult.time}`,
+  });
+});
+
+app.post("/delete", async (req, res) => {
+  const deleteResponse = await services.deleteDeployment(req.body.imageName);
+  res.status(200).json({
+    deleteResponse,
   });
 });
 

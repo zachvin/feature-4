@@ -3,6 +3,7 @@ import Parse from "parse";
 import Nav from "../Shared/Nav";
 import ModelForm from "./ModelForm";
 import ModelList from "./ModelList";
+import { deleteModel } from "./ModelService";
 
 const Models = () => {
   const [models, setModels] = useState([]);
@@ -33,12 +34,33 @@ const Models = () => {
     fetchModels();
   }, []);
 
+  async function onDelete(event, imageName, id) {
+    const data = { imageName: imageName };
+    console.log("Deleting:", data);
+    const response = await deleteModel(data); // POST to /delete by default (can't use DELETE request?)
+
+    console.log(response);
+
+    setModels(models.filter((item) => item.id !== id)); // Remove the deleted model from local storage
+    console.log(models.length);
+
+    try {
+      // Remove deleted history from database
+      const ModelToDelete = Parse.Object.extend("DockerModel");
+      const item = new ModelToDelete();
+      item.id = id;
+      await item.destroy();
+    } catch (err) {
+      console.error("Bad delete in component:", err);
+    }
+  }
+
   return (
     <>
       <Nav />
       <section className="grid grid-cols-1 gap-2 w-3/4 h-3/4 mx-auto mt-32 text-gray-900">
         <ModelForm onSubmit={fetchModels} />
-        <ModelList models={models} loading={loading} />
+        <ModelList models={models} loading={loading} onDelete={onDelete} />
       </section>
     </>
   );
