@@ -15,8 +15,6 @@ import {
 } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 
-import "./Identifier/identifier.css";
-
 export default function Components() {
   // Everything to be routed must be inside <Router> element
   return (

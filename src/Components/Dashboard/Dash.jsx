@@ -136,7 +136,7 @@ const Dash = () => {
   return (
     <>
       <Nav />
-      <section className="grid grid-cols-3 gap-2 w-3/4 h-3/4 mx-auto mt-64 text-gray-900">
+      <section className="grid grid-cols-3 gap-2 w-3/4 h-3/4 mx-auto mt-32 text-gray-900">
         <div className="flex justify-around border border-gray-300 bg-white rounded-xl shadow-lg p-16">
           <div className="w-1/3">
             <h3 className="text-xl">Welcome,</h3>
