@@ -213,7 +213,7 @@ const ModelForm = ({ onSubmit }) => {
               placeholder="Field name"
             />
             <select
-              className="p-2 border border-gray-300 rounded w-1/2"
+              className="p-2 border-2 border-gray-300 rounded w-1/2 focus:ring-indigo-500 focus:border-indigo-500 hover:cursor-pointer"
               value={field.type}
               onChange={(e) => updateField(i, "type", e.target.value)}
             >

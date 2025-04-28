@@ -58,7 +58,7 @@ const Models = () => {
   return (
     <>
       <Nav />
-      <section className="grid grid-cols-1 gap-2 w-3/4 h-3/4 mx-auto mt-32 text-gray-900">
+      <section className="grid grid-cols-1 gap-2 w-3/4 h-3/4 mx-auto mt-32 text-gray-900 mb-8">
         <ModelForm onSubmit={fetchModels} />
         <ModelList models={models} loading={loading} onDelete={onDelete} />
       </section>

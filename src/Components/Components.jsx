@@ -29,7 +29,7 @@ export default function Components() {
           path="/dashboard"
           element={<ProtectedRoute element={<Dash />} />}
         />
-        <Route path="*" element={<Navigate to="/auth" replace />} />
+        <Route path="*" element={<Navigate to="/auth/login" replace />} />
         {/* Identifier will eventually be replaced with new page in subsequent features as we transition to final project idea */}
         <Route
           path="/identifier"

@@ -15,17 +15,17 @@ export default function About() {
       <section className="mt-32 text-gray-800 w-1/2 mx-auto text-xl">
         <div className="my-16">
           <h1 className="text-4xl text-gray-900 font-semibold">
-            What is john suxify?
+            What is Testify?
           </h1>
           <p>
             Machine learning engineers shouldn't have to be network engineers,
-            too. john suxify gets rid of the complex hosting process so that you
-            can get right to public beta testing.
+            too. Testify gets rid of the complex hosting process so that you can
+            get right to public beta testing.
           </p>
         </div>
         <div className="my-16">
           <h1 className="text-4xl text-gray-900 font-semibold">
-            How do I use john suxify?
+            How do I use Testify?
           </h1>
           <p>
             Simply upload a Docker image, give a title and description, and
@@ -70,7 +70,7 @@ export default function About() {
         </div>
         <div className="my-16">
           <h1 className="text-4xl text-gray-900 font-semibold">
-            How much does john suxify cost?
+            How much does Testify cost?
           </h1>
           <p>$1,000,000 (no exceptions)</p>
         </div>

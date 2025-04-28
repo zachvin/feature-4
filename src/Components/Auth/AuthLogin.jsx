@@ -18,7 +18,6 @@ const AuthLogin = () => {
 
   useEffect(() => {
     if (checkUser()) {
-      alert("You are already logged in");
       navigate("/");
     }
   }, [navigate]);
@@ -28,9 +27,6 @@ const AuthLogin = () => {
     if (currentUser && add) {
       loginUser(currentUser).then((userLoggedIn) => {
         if (userLoggedIn) {
-          alert(
-            `${userLoggedIn.get("firstName")}, you successfully logged in!`
-          );
           navigate("/identifier");
         }
         // TODO: redirect user to main app
