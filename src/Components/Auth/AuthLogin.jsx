@@ -27,7 +27,7 @@ const AuthLogin = () => {
     if (currentUser && add) {
       loginUser(currentUser).then((userLoggedIn) => {
         if (userLoggedIn) {
-          navigate("/identifier");
+          navigate("/marketplace");
         }
         // TODO: redirect user to main app
         setAdd(false);

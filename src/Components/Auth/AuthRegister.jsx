@@ -30,7 +30,7 @@ const AuthRegister = () => {
     if (newUser && add) {
       createUser(newUser).then((userCreated) => {
         if (userCreated) {
-          navigate("/identifier");
+          navigate("/marketplace");
         }
         // TODO: redirect user to main app
         setAdd(false);
