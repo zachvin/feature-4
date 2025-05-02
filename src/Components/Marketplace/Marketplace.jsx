@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
-import Parse from "parse";
+import { getModels } from "../../Services/model";
 import Nav from "../Shared/Nav";
 import MarketplaceCard from "./MarketplaceCard";
+import { useNavigate } from "react-router-dom";
 
 const Marketplace = () => {
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // get model details from back4app
   const fetchModels = async () => {
     setLoading(true);
     try {
-      const DockerModel = Parse.Object.extend("DockerModel");
-      const query = new Parse.Query(DockerModel);
-      query.descending("createdAt");
-      const results = await query.find();
+      const results = await getModels();
       setModels(results);
     } catch (err) {
       console.error("Error fetching marketplace models:", err.message);
@@ -21,9 +20,16 @@ const Marketplace = () => {
     setLoading(false);
   };
 
+  // fetch models on page load
   useEffect(() => {
     fetchModels();
   }, []);
+
+  // move to dashboard when user clicks "test" on model card
+  const navigate = useNavigate();
+  const handleTest = () => {
+    navigate("/dashboard");
+  };
 
   return (
     <>
@@ -35,7 +41,11 @@ const Marketplace = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
             {models.map((model) => (
-              <MarketplaceCard key={model.id} model={model} />
+              <MarketplaceCard
+                key={model.id}
+                model={model}
+                handleTest={handleTest}
+              />
             ))}
           </div>
         )}

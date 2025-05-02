@@ -1,11 +1,6 @@
 import React from "react";
-import { useEffect } from "react";
 
 const DashForm = ({ onSubmit, onChange, fields }) => {
-  useEffect(() => {
-    console.log(fields);
-  }, []);
-
   return (
     <form
       onSubmit={onSubmit}

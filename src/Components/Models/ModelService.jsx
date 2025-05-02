@@ -1,4 +1,5 @@
 export async function uploadModel(data, method = "POST", endpoint = "upload") {
+  // node server URL
   const url = `http://localhost:8000/${endpoint}`;
   try {
     console.log("Request info:", JSON.stringify(data));
@@ -21,6 +22,8 @@ export async function uploadModel(data, method = "POST", endpoint = "upload") {
 
 export async function deleteModel(data, method = "POST", endpoint = "delete") {
   const url = `http://localhost:8000/${endpoint}`;
+
+  // requires content type header
   try {
     const jsonData = JSON.stringify(data);
     console.log("Request info:", jsonData);

@@ -1,15 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const MarketplaceCard = ({ model }) => {
-  const navigate = useNavigate();
-
-  const handleTest = () => {
-    navigate("/dashboard", {
-      state: { modelName: model.name || model.get("name") },
-    });
-  };
-
+const MarketplaceCard = ({ model, handleTest }) => {
   const name = model.name || model.get("name");
   const description = model.description || model.get("description");
 

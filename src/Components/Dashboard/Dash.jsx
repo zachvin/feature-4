@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Nav from "../Shared/Nav";
-import { sendInput } from "./InputService";
+import { sendInput } from "../../Services/input";
 import DashForm from "./DashForm";
-import { readUser } from "../Auth/AuthService";
+import { readUser } from "../../Services/auth";
 import {
   getUserHistory,
   appendUserHistory,
   deleteUserHistory,
-} from "../Services/history";
+} from "../../Services/history";
 import HistoryItem from "./HistoryItem";
 import ModelDropdown from "./ModelDropdown";
-import Parse from "parse";
+import { getModels } from "../../Services/model";
 
 const Dash = () => {
   // dictionary structure in case other datatypes are supported later
@@ -27,16 +27,15 @@ const Dash = () => {
   const [history, setHistory] = useState([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
 
+  // array for storing models
   const [models, setModels] = useState([]);
   const [loadingModels, setLoadingModels] = useState(true);
 
+  // gets model details from back4app
   const fetchModels = async () => {
     setLoadingModels(true);
     try {
-      const DockerModel = Parse.Object.extend("DockerModel");
-      const query = new Parse.Query(DockerModel);
-      query.descending("createdAt");
-      const results = await query.find();
+      const results = await getModels();
       setModels(results);
     } catch (err) {
       console.error("Error fetching marketplace models:", err.message);
@@ -51,7 +50,7 @@ const Dash = () => {
   useEffect(() => {
     getUserHistory().then((loadedHistory) => {
       // reset history to being empty on page load because strict mode makes this
-      // run twice which doubles the history array I guess that's considered helpful
+      // run twice which doubles the history array
       setHistory([]);
       loadedHistory.forEach((element) => {
         const next = {
@@ -76,8 +75,10 @@ const Dash = () => {
   const [currentEndpoint, setCurrentEndpoint] = useState("/predict");
   const [currentModel, setCurrentModel] = useState(null);
 
-  const onSelect = (modelName) => {
+  // when a model is selected, that model's IP is loaded for future fetch requests
+  const onSelect = (event) => {
     // get model
+    const modelName = event.target.value;
     console.log(modelName);
     const currentModel = models.find((model) => model.get("name") == modelName);
     setCurrentModel(currentModel);
@@ -102,6 +103,7 @@ const Dash = () => {
     setIsLoading(true);
 
     try {
+      // all containers use port 80
       const url = `http://${currentIp}:80${currentEndpoint}`;
       console.log(url);
 
@@ -122,8 +124,9 @@ const Dash = () => {
         },
         ...history,
       ]);
-      setApiData(JSON.stringify(response));
 
+      // sets ApiData for display on dashboard and adds output to user history
+      setApiData(JSON.stringify(response));
       appendUserHistory(modelName, Date.now(), JSON.stringify(input), response);
     } catch (err) {
       console.error("API Error in component:", err);
@@ -155,12 +158,13 @@ const Dash = () => {
             <ModelDropdown
               models={models}
               loading={loadingModels}
+              currentModel={currentModel}
               onSelect={onSelect}
             />
             <DashForm
               onSubmit={onSubmitHandler}
               onChange={onChangeHandler}
-              fields={currentModel?.get("inputs")} // TODO this isn't the right variable but has the right idea
+              fields={currentModel?.get("inputs")}
             />
           </div>
           <div>

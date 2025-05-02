@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from "react";
-import Parse from "parse";
-import { uploadModel } from "./ModelService";
+// import { uploadModel } from "./ModelService";
 import { ClipLoader } from "react-spinners";
+import { readUser } from "../../Services/auth";
+import { newParseModel, uploadModel } from "../../Services/model";
 
 const ModelForm = ({ onSubmit }) => {
   const [file, setFile] = useState(null);
@@ -13,6 +14,7 @@ const ModelForm = ({ onSubmit }) => {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+  // handle changes to fields in form
   const addField = () => {
     setFields([...fields, { name: "", type: "string" }]);
   };
@@ -29,11 +31,13 @@ const ModelForm = ({ onSubmit }) => {
     setFields(updated);
   };
 
+  // callback for file drag and drop
   const handleDrop = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
 
+    // only allow .tar files
     const droppedFile = e.dataTransfer.files[0];
     if (droppedFile && droppedFile.type === "application/tar") {
       setFile(droppedFile);
@@ -46,6 +50,7 @@ const ModelForm = ({ onSubmit }) => {
     e.preventDefault();
     e.stopPropagation();
 
+    // flags used for styling when file is dragged into/over submission area
     if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
     } else if (e.type === "dragleave") {
@@ -54,34 +59,15 @@ const ModelForm = ({ onSubmit }) => {
   }, []);
 
   const submitModel = async () => {
-    const user = Parse.User.current();
+    const user = readUser();
     if (!file || !user) return alert("Login and select a file first.");
 
+    // these flags control loading (submitting) and success (submitted) messages
     setSubmitted(false);
     setSubmitting(true);
     try {
-      // const port = await getUnusedPort();
-
-      const DockerModel = Parse.Object.extend("DockerModel");
-      const model = new DockerModel();
-
-      model.set("userID", user);
-      model.set("status", "pending");
-      model.set("name", name.trim());
-      model.set("description", description.trim());
-      model.set("endpoint", endpoint.trim());
-      model.set(
-        "inputs",
-        fields.map((f) => ({
-          name: f.name.trim(),
-          type: f.type.trim(),
-        }))
-      );
-      model.set("contentType", "application/json");
-
+      // send file to backend here using FormData object
       console.log("Deploying and retrieving IP...");
-
-      // send file to backend here
       const formData = new FormData();
       formData.append("file", file);
       formData.append("endpoint", (endpoint || "").trim());
@@ -89,12 +75,16 @@ const ModelForm = ({ onSubmit }) => {
 
       const uploadResponse = await uploadModel(formData); // POST to /upload by default
 
-      model.set("ip", uploadResponse.ip);
-      model.set("imageName", `${uploadResponse.imageName}`);
-
-      console.log("Saving model to database...");
-      await model.save();
-      console.log("Done.");
+      // make new Docker model entry for back4app
+      newParseModel(
+        user,
+        name,
+        description,
+        endpoint,
+        fields,
+        uploadResponse.ip,
+        uploadResponse.imageName
+      );
 
       // Reset form
       setFile(null);
@@ -258,7 +248,6 @@ const ModelForm = ({ onSubmit }) => {
         <ClipLoader
           color={"#4f46e5"}
           loading={submitting}
-          // cssOverride={override}
           size={20}
           aria-label="Loading Spinner"
           data-testid="loader"

@@ -1,10 +1,10 @@
 import Parse from "parse";
-import { useNavigate } from "react-router-dom";
 
 // used in auth register component
 export const createUser = (newUser) => {
   const user = new Parse.User();
 
+  // send user data to back4app for registration
   user.set("username", newUser.email);
   user.set("firstName", newUser.firstName);
   user.set("lastName", newUser.lastName);
@@ -41,10 +41,12 @@ export const loginUser = (currUser) => {
     });
 };
 
+// checks if a user is authenticated
 export const checkUser = () => {
   return Parse.User.current()?.authenticated;
 };
 
+// logs out user and reloads the page (so protected routes kick in)
 export const logoutUser = () => {
   return Parse.User.logOut()
     .then(() => {
@@ -56,6 +58,7 @@ export const logoutUser = () => {
     });
 };
 
+// gets current user session data
 export const readUser = () => {
   return Parse.User.current();
 };

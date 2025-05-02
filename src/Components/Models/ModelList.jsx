@@ -1,6 +1,7 @@
 import React from "react";
 
 const ModelList = ({ models, loading, onDelete }) => {
+  // list of models submitted by the logged in user
   return (
     <div className="border border-gray-300 bg-white rounded-xl shadow-lg p-16 col-span-2">
       <h3 className="text-xl mb-4">My Models</h3>

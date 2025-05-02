@@ -1,5 +1,5 @@
 import Parse from "parse";
-import { readUser } from "../Auth/AuthService";
+import { readUser } from "./auth";
 
 // Get history associated with user
 export const getUserHistory = () => {

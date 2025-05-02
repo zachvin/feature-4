@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { checkUser, createUser } from "./AuthService";
+import { checkUser, createUser } from "../../Services/auth";
 import AuthForm from "./AuthForm";
 import { useNavigate } from "react-router-dom";
 import Nav from "../Shared/Nav";
@@ -17,22 +17,21 @@ const AuthRegister = () => {
   // flags in the state to watch for add/remove updates
   const [add, setAdd] = useState(false);
 
-  // redirect already authenticated users back to home
+  // redirect already authenticated users to marketplace
   useEffect(() => {
     if (checkUser()) {
-      navigate("/");
+      navigate("/marketplace");
     }
   }, [navigate]);
 
   // useEffect that run when changes are made to the state variable flags
   useEffect(() => {
-    // checkUser() ? history.push("/home"): null;
     if (newUser && add) {
       createUser(newUser).then((userCreated) => {
+        // redirects user to marketplace after registering
         if (userCreated) {
           navigate("/marketplace");
         }
-        // TODO: redirect user to main app
         setAdd(false);
       });
     }

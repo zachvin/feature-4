@@ -1,18 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 
-const ModelDropdown = ({ models, loading, onSelect }) => {
-  const [currentModel, setCurrentModel] = useState(null);
-  const handleModelChange = (event) => {
-    setCurrentModel(event.target.value);
-    console.log("Selected Model:", event.target.value);
-    onSelect(event.target.value);
-  };
-
+const ModelDropdown = ({ models, loading, currentModel, onSelect }) => {
+  // curentModel passed down and onSelect passed up, as per data down events up
   return (
     <div className="flex flex-col items-start gap-4 mb-4">
       <select
-        value={currentModel || ""}
-        onChange={handleModelChange}
+        value={currentModel?.get("name") || ""}
+        onChange={onSelect}
         className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-700 w-xs"
       >
         <option value="" disabled hidden>

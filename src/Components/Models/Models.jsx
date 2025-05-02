@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
-import Parse from "parse";
 import Nav from "../Shared/Nav";
 import ModelForm from "./ModelForm";
 import ModelList from "./ModelList";
-import { deleteModel } from "./ModelService";
+// import { deleteModel } from "./ModelService";
+import {
+  deleteParseModel,
+  getUserModels,
+  deleteModel,
+} from "../../Services/model";
+import { readUser } from "../../Services/auth";
 
 const Models = () => {
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // get all models that the user owns, in chronological order
   const fetchModels = async () => {
-    const user = Parse.User.current();
+    const user = readUser();
     if (!user) {
       setLoading(false);
       return;
@@ -18,11 +24,7 @@ const Models = () => {
 
     setLoading(true);
     try {
-      const DockerModel = Parse.Object.extend("DockerModel");
-      const query = new Parse.Query(DockerModel);
-      query.equalTo("userID", user);
-      query.descending("createdAt");
-      const results = await query.find();
+      const results = await getUserModels(user);
       setModels(results);
     } catch (err) {
       console.error("Error fetching models:", err.message);
@@ -30,26 +32,26 @@ const Models = () => {
     setLoading(false);
   };
 
+  // get models on page load
   useEffect(() => {
     fetchModels();
   }, []);
 
+  // to delete a model, it has to be removed from back4app and local storage, the image must be undeployed, and the corresponding
+  // service that provided the image its IP must be removed, too
   async function onDelete(event, imageName, id) {
     const data = { imageName: imageName };
     console.log("Deleting:", data);
-    const response = await deleteModel(data); // POST to /delete by default (can't use DELETE request?)
+    // deleteModel() sends a request to the backend, where the model will be removed using Google's and Kubernetes's APIs
+    const response = await deleteModel(data); // POST to /delete by default. had some errors when trying to use DELETE request type.
 
     console.log(response);
 
-    setModels(models.filter((item) => item.id !== id)); // Remove the deleted model from local storage
-    console.log(models.length);
+    setModels(models.filter((item) => item.id !== id)); // remove the deleted model from local storage
 
     try {
-      // Remove deleted history from database
-      const ModelToDelete = Parse.Object.extend("DockerModel");
-      const item = new ModelToDelete();
-      item.id = id;
-      await item.destroy();
+      // remove deleted history from back4app
+      await deleteParseModel(id);
     } catch (err) {
       console.error("Bad delete in component:", err);
     }
