@@ -1,6 +1,6 @@
-# Feature 5
+# Feature 6
 
 Students: John Kapustka and Zach Vincent
 
 Project Overview:
-Plant identifier website using Parse, routing, and authentication.
+Website for easily uploading and sharing neural networks.
