@@ -17,7 +17,7 @@ npm audit fix
 npm run dev
 ```
 
-The backend will run but will not function properly on another system because the Google Cloud and Kubernetes APIs require authentication, so model uploading/deleting will not work. However, the frontend is still functional, including submitting to neural networks.
+The backend will run but will not function properly on another system because the Google Cloud and Kubernetes APIs require authentication, so model uploading/deleting will not work. However, the frontend is still functional, including submitting to neural networks. To verify that the backend at least runs, install the dependencies and run it:
 
 ```
 cd backend
