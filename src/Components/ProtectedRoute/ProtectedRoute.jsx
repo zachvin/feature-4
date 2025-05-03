@@ -1,14 +1,13 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { checkUser } from "../Auth/AuthService";
+import { checkUser } from "../../Services/auth";
 import { Navigate } from "react-router-dom";
 
-// You can pass props using the spread operator to throw them on an object if there are too many to break out
 const ProtectedRoute = ({ element: Component, ...rest }) => {
   if (checkUser()) {
     return Component;
   } else {
-    return <Navigate to="/auth" replace />;
+    // redirects to login instead of just /auth (login page looks more professional)
+    return <Navigate to="/auth/login" replace />;
   }
 };
 

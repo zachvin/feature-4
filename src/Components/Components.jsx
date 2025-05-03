@@ -1,9 +1,11 @@
 import Home from "./Home/Home";
 import About from "./About/About";
-import Identifier from "./Identifier/Identifier";
+import Marketplace from "./Marketplace/Marketplace";
 import AuthModule from "./Auth/Auth";
 import AuthRegister from "./Auth/AuthRegister";
 import AuthLogin from "./Auth/AuthLogin";
+import Dash from "./Dashboard/Dash";
+import Models from "./Models/Models";
 
 import {
   BrowserRouter as Router,
@@ -12,8 +14,6 @@ import {
   Navigate,
 } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
-
-import "./Identifier/identifier.css";
 
 export default function Components() {
   // Everything to be routed must be inside <Router> element
@@ -25,12 +25,18 @@ export default function Components() {
         <Route path="/auth/register" element={<AuthRegister />} />
         <Route path="/auth/login" element={<AuthLogin />} />
         <Route path="/about" element={<About />} />
-        <Route path="*" element={<Navigate to="/auth" replace />} />
-
-        {/* Identifier will eventually be replaced with new page in subsequent features as we transition to final project idea */}
         <Route
-          path="/identifier"
-          element={<ProtectedRoute element={<Identifier />} />}
+          path="/dashboard"
+          element={<ProtectedRoute element={<Dash />} />}
+        />
+        <Route path="*" element={<Navigate to="/auth/login" replace />} />
+        <Route
+          path="/marketplace"
+          element={<ProtectedRoute element={<Marketplace />} />}
+        />
+        <Route
+          path="/models"
+          element={<ProtectedRoute element={<Models />} />}
         />
       </Routes>
     </Router>

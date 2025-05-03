@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
 import AuthLogout from "../Auth/AuthLogout";
-import { checkUser } from "../Auth/AuthService";
+import { checkUser, logoutUser } from "../../Services/auth";
 
 const Nav = () => {
   // Link instead of <a> doesn't force reload
   return (
     <nav className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
       <div className="w-screen flex flex-wrap items-center align-middle justify-between p-4">
-        <h1 className="block text-2xl font-extrabold w-xs">TESTIFY</h1>
+        <h1 className="block text-2xl font-extrabold w-xs">Testify</h1>
         <div
           className="items-center justify-between w-full md:flex md:w-auto"
           id="navbar-sticky"
@@ -31,10 +31,26 @@ const Nav = () => {
             </li>
             <li>
               <Link
-                to="/identifier"
+                to="/marketplace"
                 className="block p-2 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >
-                Models
+                Marketplace
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/dashboard"
+                className="block p-2 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              >
+                Dashboard
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/models"
+                className="block p-2 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              >
+                My Models
               </Link>
             </li>
           </ul>
@@ -42,6 +58,14 @@ const Nav = () => {
         <ul className="flex justify-end align-middle gap-12 w-xs">
           {checkUser() ? (
             <>
+              <li>
+                <button
+                  className="block p-2 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700 cursor-pointer"
+                  onClick={logoutUser}
+                >
+                  Log out
+                </button>
+              </li>
               <li>
                 <Link
                   to="/profile"
